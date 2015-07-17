@@ -21,9 +21,9 @@ public class TableRow extends JPanel {
 	private boolean edit = false;
 	private static final long serialVersionUID = 6359330881452231410L;
 	private JLabel id;
-	private JTextField description, price, quantity;
+	private JTextField description, inicialPrice, price, quantity;
 
-	public TableRow(int v1, String v2, int v3, int v4) {
+	public TableRow(int v1, String v2, int v3, int v4, int v5) {
 		addMouseListener(mouseEvent());
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(255, 255, 255));
@@ -62,7 +62,7 @@ public class TableRow extends JPanel {
 		description.setBorder(null);
 		description.setEditable(false);
 		description.setOpaque(false);
-		description.setColumns(40);
+		description.setPreferredSize(new Dimension(360, height));
 		panel_CENTER.add(description, BorderLayout.WEST);
 
 		JPanel panel_CENTER_CENTE = new JPanel();
@@ -70,6 +70,14 @@ public class TableRow extends JPanel {
 		panel_CENTER.add(panel_CENTER_CENTE, BorderLayout.CENTER);
 		panel_CENTER_CENTE.setLayout(new GridLayout(1, 0, 0, 0));
 
+		inicialPrice = new JTextField();
+		inicialPrice.setHorizontalAlignment(SwingConstants.CENTER);
+		inicialPrice.addMouseListener(mouseEvent());
+		inicialPrice.setOpaque(false);
+		inicialPrice.setBorder(null);
+		inicialPrice.setEditable(false);
+		panel_CENTER_CENTE.add(inicialPrice);
+		
 		price = new JTextField();
 		price.setHorizontalAlignment(SwingConstants.CENTER);
 		price.addMouseListener(mouseEvent());
@@ -77,7 +85,7 @@ public class TableRow extends JPanel {
 		price.setBorder(null);
 		price.setEditable(false);
 		panel_CENTER_CENTE.add(price);
-
+		
 		quantity = new JTextField();
 		quantity.setHorizontalAlignment(SwingConstants.CENTER);
 		quantity.addMouseListener(mouseEvent());
@@ -128,8 +136,9 @@ public class TableRow extends JPanel {
 		panel_EAST.add(JL_delete);
 
 		description.setText(v2);
-		price.setText("" + v3);
-		quantity.setText("" + v4);
+		inicialPrice.setText("" + v3);
+		price.setText("" + v4);
+		quantity.setText("" + v5);
 	}
 
 	public MouseAdapter mouseEvent() {

@@ -14,7 +14,7 @@ public class TableTitle extends JPanel {
 	private int height = 30;
 	private static final long serialVersionUID = -7812049790984436067L;
 
-	public TableTitle(String v1, String v2, String v3) {
+	public TableTitle(String v1, String v2, String v3, String v4) {
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(248, 248, 248));
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
@@ -43,7 +43,7 @@ public class TableTitle extends JPanel {
 		
 		JLabel JL_1 = new JLabel(v1);
 		JL_1.setOpaque(false);
-		JL_1.setPreferredSize(new Dimension(440, height));
+		JL_1.setPreferredSize(new Dimension(360, height));
 		panel_CENTER.add(JL_1, BorderLayout.WEST);
 		
 		JPanel panel_CENTER_CENTE = new JPanel();
@@ -61,6 +61,11 @@ public class TableTitle extends JPanel {
 		JL_3.setHorizontalAlignment(SwingConstants.CENTER);
 		JL_3.setOpaque(false);
 		panel_CENTER_CENTE.add(JL_3 );
+		
+		JLabel JL_4 = new JLabel(v4);
+		JL_4.setHorizontalAlignment(SwingConstants.CENTER);
+		JL_4.setOpaque(false);
+		panel_CENTER_CENTE.add(JL_4);
 		
 		JLabel line_NORTH = new JLabel();
 		line_NORTH.setPreferredSize(new Dimension(Integer.MAX_VALUE, 1));
