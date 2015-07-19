@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
@@ -14,16 +16,18 @@ import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 
 public class TableRow extends JPanel {
 
 	private int height = 25;
-	private boolean edit = false;
+	private boolean edit, first = true;
 	private static final long serialVersionUID = 6359330881452231410L;
 	private JLabel id;
-	private JTextField description, inicialPrice, price, quantity;
+	private JPanel panel_CENTER_CENTE, panel_CENTER;
+	private ArrayList<JTextComponent> info = new ArrayList<JTextComponent>();
 
-	public TableRow(int v1, String v2, int v3, int v4, int v5) {
+	public TableRow(String[] data) {
 		addMouseListener(mouseEvent());
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(255, 255, 255));
@@ -41,7 +45,7 @@ public class TableRow extends JPanel {
 		check.setOpaque(false);
 		panel_WEST.add(check, BorderLayout.WEST);
 
-		id = new JLabel("" + v1);
+		id = new JLabel(data[0]);
 		id.setHorizontalAlignment(SwingConstants.CENTER);
 		id.setPreferredSize(new Dimension(35, height));
 		panel_WEST.add(id, BorderLayout.CENTER);
@@ -52,48 +56,18 @@ public class TableRow extends JPanel {
 		line_SOUTH.setOpaque(true);
 		add(line_SOUTH, BorderLayout.SOUTH);
 
-		JPanel panel_CENTER = new JPanel();
+		panel_CENTER = new JPanel();
 		panel_CENTER.setOpaque(false);
 		add(panel_CENTER, BorderLayout.CENTER);
 		panel_CENTER.setLayout(new BorderLayout(0, 0));
 
-		description = new JTextField();
-		description.addMouseListener(mouseEvent());
-		description.setBorder(null);
-		description.setEditable(false);
-		description.setOpaque(false);
-		description.setPreferredSize(new Dimension(360, height));
-		panel_CENTER.add(description, BorderLayout.WEST);
-
-		JPanel panel_CENTER_CENTE = new JPanel();
+		panel_CENTER_CENTE = new JPanel();
 		panel_CENTER_CENTE.setOpaque(false);
 		panel_CENTER.add(panel_CENTER_CENTE, BorderLayout.CENTER);
 		panel_CENTER_CENTE.setLayout(new GridLayout(1, 0, 0, 0));
-
-		inicialPrice = new JTextField();
-		inicialPrice.setHorizontalAlignment(SwingConstants.CENTER);
-		inicialPrice.addMouseListener(mouseEvent());
-		inicialPrice.setOpaque(false);
-		inicialPrice.setBorder(null);
-		inicialPrice.setEditable(false);
-		panel_CENTER_CENTE.add(inicialPrice);
 		
-		price = new JTextField();
-		price.setHorizontalAlignment(SwingConstants.CENTER);
-		price.addMouseListener(mouseEvent());
-		price.setOpaque(false);
-		price.setBorder(null);
-		price.setEditable(false);
-		panel_CENTER_CENTE.add(price);
+		id.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
-		quantity = new JTextField();
-		quantity.setHorizontalAlignment(SwingConstants.CENTER);
-		quantity.addMouseListener(mouseEvent());
-		quantity.setOpaque(false);
-		quantity.setBorder(null);
-		quantity.setEditable(false);
-		panel_CENTER_CENTE.add(quantity);
-
 		JPanel panel_EAST = new JPanel();
 		panel_EAST.setBorder(new EmptyBorder(0, 0, 0, 10));
 		panel_EAST.setOpaque(false);
@@ -101,18 +75,32 @@ public class TableRow extends JPanel {
 		add(panel_EAST, BorderLayout.EAST);
 		panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
 
+		JLabel JL_delete = new JLabel(new ImageIcon("img/trash.png"));
+		JL_delete.setOpaque(false);
+		
 		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
 		JL_edit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				edit = !edit;
-				if (edit)
-					setBackground(new Color(180, 229, 106));
-				else
-					setBackground(new Color(255, 255, 255));
-				description.setEditable(edit);
-				price.setEditable(edit);
-				quantity.setEditable(edit);
+				
+				if (edit){
+					for(JTextComponent ob : info){
+						ob.setFont(new Font("Tahoma", Font.PLAIN, 16));
+					}
+					JL_edit.setIcon(new ImageIcon("img/tick.png"));
+					JL_delete.setIcon(new ImageIcon("img/cross.png"));
+					
+				}else{
+					for(JTextComponent ob : info){
+						ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
+					}
+					JL_edit.setIcon(new ImageIcon("img/pencil.png"));
+					JL_delete.setIcon(new ImageIcon("img/trash.png"));
+				}
+				for(JTextComponent ob : info){
+					ob.setEditable(edit);
+				}
 			}
 
 			@Override
@@ -129,18 +117,35 @@ public class TableRow extends JPanel {
 					setBackground(new Color(255, 255, 255));
 			}
 		});
+		
+		for(int i = 1; i < data.length; i++){
+			addCamp(data[i]);
+		}
+		
 		panel_EAST.add(JL_edit);
-
-		JLabel JL_delete = new JLabel(new ImageIcon("img/trash.png"));
-		JL_delete.setOpaque(false);
 		panel_EAST.add(JL_delete);
-
-		description.setText(v2);
-		inicialPrice.setText("" + v3);
-		price.setText("" + v4);
-		quantity.setText("" + v5);
 	}
 
+	public void addCamp(String name){
+		JTextField JTF = new JTextField(name);
+		JTF.addMouseListener(mouseEvent());
+		JTF.setOpaque(false);
+		JTF.setBorder(null);
+		JTF.setEditable(false);
+		JTF.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		info.add(JTF);
+		
+		if(first){
+			JTF.setPreferredSize(new Dimension(360, height));
+			panel_CENTER.add(JTF, BorderLayout.WEST);
+			first = false;
+			return;
+		}
+		
+		JTF.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_CENTER_CENTE.add(JTF);
+	}
+	
 	public MouseAdapter mouseEvent() {
 		return new MouseAdapter() {
 			@Override

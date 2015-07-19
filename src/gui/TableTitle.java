@@ -12,9 +12,11 @@ import java.awt.GridLayout;
 
 public class TableTitle extends JPanel {
 	private int height = 30;
+	private boolean actual = true;
 	private static final long serialVersionUID = -7812049790984436067L;
+	JPanel panel_CENTER_CENTE, panel_CENTER;
 
-	public TableTitle(String v1, String v2, String v3, String v4) {
+	public TableTitle(String[] title) {
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(248, 248, 248));
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
@@ -36,36 +38,16 @@ public class TableTitle extends JPanel {
 		id.setPreferredSize(new Dimension(35, height));
 		panel_WEST.add(id, BorderLayout.CENTER);
 		
-		JPanel panel_CENTER = new JPanel();
+		panel_CENTER = new JPanel();
 		panel_CENTER.setOpaque(false);
 		add(panel_CENTER, BorderLayout.CENTER);
 		panel_CENTER.setLayout(new BorderLayout(0, 0));
 		
-		JLabel JL_1 = new JLabel(v1);
-		JL_1.setOpaque(false);
-		JL_1.setPreferredSize(new Dimension(360, height));
-		panel_CENTER.add(JL_1, BorderLayout.WEST);
-		
-		JPanel panel_CENTER_CENTE = new JPanel();
+		panel_CENTER_CENTE = new JPanel();
 		panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 50));
 		panel_CENTER_CENTE.setOpaque(false);
 		panel_CENTER.add(panel_CENTER_CENTE, BorderLayout.CENTER);
 		panel_CENTER_CENTE.setLayout(new GridLayout(1, 0, 0, 0));
-
-		JLabel JL_2 = new JLabel(v2);
-		JL_2.setHorizontalAlignment(SwingConstants.CENTER);
-		JL_2.setOpaque(false);
-		panel_CENTER_CENTE.add(JL_2);
-
-		JLabel JL_3 = new JLabel(v3);
-		JL_3.setHorizontalAlignment(SwingConstants.CENTER);
-		JL_3.setOpaque(false);
-		panel_CENTER_CENTE.add(JL_3 );
-		
-		JLabel JL_4 = new JLabel(v4);
-		JL_4.setHorizontalAlignment(SwingConstants.CENTER);
-		JL_4.setOpaque(false);
-		panel_CENTER_CENTE.add(JL_4);
 		
 		JLabel line_NORTH = new JLabel();
 		line_NORTH.setPreferredSize(new Dimension(Integer.MAX_VALUE, 1));
@@ -78,6 +60,24 @@ public class TableTitle extends JPanel {
 		line_SOUTH.setBackground(new Color(196, 196, 196));
 		line_SOUTH.setOpaque(true);
 		add(line_SOUTH, BorderLayout.SOUTH);
+		
+		for(String s_title : title){
+			addTitle(s_title);
+		}
+	}
+	
+	public void addTitle(String name){
+		JLabel JL = new JLabel(name);
+		JL.setOpaque(false);
+		
+		if(actual){
+			JL.setPreferredSize(new Dimension(360, height));
+			panel_CENTER.add(JL, BorderLayout.WEST);
+			actual=false;
+			return;
+		}		
+		JL.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_CENTER_CENTE.add(JL);
 	}
 }
 
