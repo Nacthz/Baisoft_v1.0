@@ -24,6 +24,7 @@ public class TableRow extends JPanel {
 	private boolean edit, first = true;
 	private static final long serialVersionUID = 6359330881452231410L;
 	private JLabel id;
+	private JCheckBox check;
 	private JPanel panel_CENTER_CENTE, panel_CENTER;
 	private ArrayList<JTextComponent> info = new ArrayList<JTextComponent>();
 
@@ -40,7 +41,7 @@ public class TableRow extends JPanel {
 		add(panel_WEST, BorderLayout.WEST);
 		panel_WEST.setLayout(new BorderLayout(0, 0));
 
-		JCheckBox check = new JCheckBox();
+		check = new JCheckBox();
 		check.addMouseListener(mouseEvent());
 		check.setOpaque(false);
 		panel_WEST.add(check, BorderLayout.WEST);
@@ -76,6 +77,25 @@ public class TableRow extends JPanel {
 		panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
 
 		JLabel JL_delete = new JLabel(new ImageIcon("img/trash.png"));
+		JL_delete.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				doDelete();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				if (!edit)
+					setBackground(new Color(230, 230, 230));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				if (!edit)
+					setBackground(new Color(255, 255, 255));
+			}
+		});
 		JL_delete.setOpaque(false);
 		
 		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
@@ -161,5 +181,16 @@ public class TableRow extends JPanel {
 			}
 		};
 	}
-
+	
+	public void setSelected(boolean status){
+		check.setSelected(status);
+	}
+	
+	public void doDelete(){
+		System.out.println("Eliminado");
+	}
+	
+	public boolean isSelected(){
+		return check.isSelected();
+	}
 }

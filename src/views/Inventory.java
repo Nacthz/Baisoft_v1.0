@@ -27,8 +27,8 @@ public class Inventory extends JPanel {
 		data.add(new String[] {"2","Alternador","10626","11568","90"});
 		data.add(new String[] {"3","Amortiguador delantero derecho","25381","32510","25"});
 		data.add(new String[] {"4","Amortiguador delantero izquierdo","58984","66752","95"});
-		data.add(new String[] {"5","Amortiguador trasero derecho","17442","61481","114"});
 		data.add(new String[] {"6","Amortiguador trasero izquierdo","60627","70770","108"});
+		data.add(new String[] {"5","Amortiguador trasero derecho","17442","61481","114"});
 		data.add(new String[] {"7","Arrancador","10700","10785","22"});
 		data.add(new String[] {"8","Articulacion trasera derecha","36487","47642","96"});
 		data.add(new String[] {"9","Articulacion trasera izquierda","19821","38054","99"});

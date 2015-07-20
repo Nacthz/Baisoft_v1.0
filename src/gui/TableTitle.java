@@ -9,6 +9,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class TableTitle extends JPanel {
 	private int height = 30;
@@ -16,7 +18,7 @@ public class TableTitle extends JPanel {
 	private static final long serialVersionUID = -7812049790984436067L;
 	JPanel panel_CENTER_CENTE, panel_CENTER;
 
-	public TableTitle(String[] title) {
+	public TableTitle(String[] title, Table father) {
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(248, 248, 248));
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
@@ -30,6 +32,16 @@ public class TableTitle extends JPanel {
 		panel_WEST.setLayout(new BorderLayout(0, 0));
 
 		JCheckBox check = new JCheckBox();
+		check.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(check.isSelected()){
+					father.setSelected(true);
+				}else{
+					father.setSelected(false);
+				}
+			}
+		});
 		check.setOpaque(false);
 		panel_WEST.add(check, BorderLayout.WEST);
 		

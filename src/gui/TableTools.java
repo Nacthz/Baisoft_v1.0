@@ -40,7 +40,7 @@ public class TableTools extends JPanel {
 
 		//Buttons
 		JLabel JL_activos = new JLabel("Activos");
-		JLabel JL_todos = new JLabel("Todos");
+		JLabel JL_todos = new JLabel("Eliminados");
 		
 		JL_activos.addMouseListener(new MouseAdapter() {
 			@Override
@@ -86,7 +86,7 @@ public class TableTools extends JPanel {
 		});
 		JL_todos.setHorizontalAlignment(SwingConstants.CENTER);
 		JL_todos.setOpaque(true);
-		JL_todos.setPreferredSize(new Dimension(64, 28));
+		JL_todos.setPreferredSize(new Dimension(74, 28));
 		deselect(JL_todos);
 		panell_SOUTH_WEST.add(JL_todos);
 	}
