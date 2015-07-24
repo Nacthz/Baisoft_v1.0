@@ -21,14 +21,20 @@ import javax.swing.text.JTextComponent;
 public class TableRow extends JPanel {
 
 	private int height = 25;
+	private int index = 0;
 	private boolean edit, first = true;
 	private static final long serialVersionUID = 6359330881452231410L;
 	private JLabel id;
 	private JCheckBox check;
 	private JPanel panel_CENTER_CENTE, panel_CENTER;
 	private ArrayList<JTextComponent> info = new ArrayList<JTextComponent>();
+	private String[] backup = {};
+	private Table father;
 
-	public TableRow(String[] data) {
+	public TableRow(String[] data, int index, Table father) {
+		this.father = father;
+		this.index = index;
+		backup = data;
 		addMouseListener(mouseEvent());
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(255, 255, 255));
@@ -66,9 +72,9 @@ public class TableRow extends JPanel {
 		panel_CENTER_CENTE.setOpaque(false);
 		panel_CENTER.add(panel_CENTER_CENTE, BorderLayout.CENTER);
 		panel_CENTER_CENTE.setLayout(new GridLayout(1, 0, 0, 0));
-		
+
 		id.setFont(new Font("Tahoma", Font.BOLD, 12));
-		
+
 		JPanel panel_EAST = new JPanel();
 		panel_EAST.setBorder(new EmptyBorder(0, 0, 0, 10));
 		panel_EAST.setOpaque(false);
@@ -77,11 +83,29 @@ public class TableRow extends JPanel {
 		panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
 
 		JLabel JL_delete = new JLabel(new ImageIcon("img/trash.png"));
+		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
+		
 		JL_delete.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				doDelete();
+				if (edit) {
+					edit = !edit;
+					int i = 1;
+					for (JTextComponent ob : info) {
+						ob.setText(backup[i]);
+						ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
+						ob.setEditable(edit);
+						i++;
+					}
+					
+					JL_edit.setIcon(new ImageIcon("img/pencil.png"));
+					JL_delete.setIcon(new ImageIcon("img/trash.png"));
+				} else {
+					doDelete();
+					// TODO hacer el eliminar
+				}
 			}
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -97,29 +121,32 @@ public class TableRow extends JPanel {
 			}
 		});
 		JL_delete.setOpaque(false);
+
 		
-		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
 		JL_edit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				edit = !edit;
-				
-				if (edit){
-					for(JTextComponent ob : info){
+
+				if (edit) {
+					for (JTextComponent ob : info) {
 						ob.setFont(new Font("Tahoma", Font.PLAIN, 16));
+						ob.setEditable(edit);
 					}
 					JL_edit.setIcon(new ImageIcon("img/tick.png"));
 					JL_delete.setIcon(new ImageIcon("img/cross.png"));
-					
-				}else{
-					for(JTextComponent ob : info){
+
+				} else {
+					int i = 1;
+					for (JTextComponent ob : info) {
 						ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
+						ob.setEditable(edit);
+						backup[i] = ob.getText();
+						i++;
 					}
+					// TODO Hacer el update en la base de datos
 					JL_edit.setIcon(new ImageIcon("img/pencil.png"));
 					JL_delete.setIcon(new ImageIcon("img/trash.png"));
-				}
-				for(JTextComponent ob : info){
-					ob.setEditable(edit);
 				}
 			}
 
@@ -137,16 +164,16 @@ public class TableRow extends JPanel {
 					setBackground(new Color(255, 255, 255));
 			}
 		});
-		
-		for(int i = 1; i < data.length; i++){
+
+		for (int i = 1; i < data.length; i++) {
 			addCamp(data[i]);
 		}
-		
+
 		panel_EAST.add(JL_edit);
 		panel_EAST.add(JL_delete);
 	}
 
-	public void addCamp(String name){
+	public void addCamp(String name) {
 		JTextField JTF = new JTextField(name);
 		JTF.addMouseListener(mouseEvent());
 		JTF.setOpaque(false);
@@ -154,18 +181,18 @@ public class TableRow extends JPanel {
 		JTF.setEditable(false);
 		JTF.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		info.add(JTF);
-		
-		if(first){
+
+		if (first) {
 			JTF.setPreferredSize(new Dimension(360, height));
 			panel_CENTER.add(JTF, BorderLayout.WEST);
 			first = false;
 			return;
 		}
-		
+
 		JTF.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_CENTER_CENTE.add(JTF);
 	}
-	
+
 	public MouseAdapter mouseEvent() {
 		return new MouseAdapter() {
 			@Override
@@ -181,16 +208,16 @@ public class TableRow extends JPanel {
 			}
 		};
 	}
-	
-	public void setSelected(boolean status){
+
+	public void setSelected(boolean status) {
 		check.setSelected(status);
 	}
-	
-	public void doDelete(){
-		System.out.println("Eliminado");
+
+	public void doDelete() {
+		father.deleteRow(index);
 	}
-	
-	public boolean isSelected(){
+
+	public boolean isSelected() {
 		return check.isSelected();
 	}
 }

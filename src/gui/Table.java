@@ -28,6 +28,7 @@ public class Table extends JPanel {
 	private static final long serialVersionUID = -2108154469027694188L;
 	private ArrayList<TableRow> rows = new ArrayList<TableRow>();
 	private ArrayList<String[]> data;
+	private Table actualTable = this;
 
 	public boolean isFocusable() {
 		return true;
@@ -41,7 +42,6 @@ public class Table extends JPanel {
 		JPanel panel_NORTH = new JPanel();
 		panel_NORTH.setLayout(new BorderLayout(0, 0));
 		add(panel_NORTH, BorderLayout.NORTH);
-		panel_NORTH.add(new TableTools(), BorderLayout.NORTH);
 		panel_NORTH.add(new TableTitle(title, this), BorderLayout.CENTER);
 
 		panel_CENTER = new JPanel();
@@ -70,7 +70,7 @@ public class Table extends JPanel {
 				int newCant = panel_CENTER.getHeight() / 25;
 				if (max < newCant) {
 					if(actual < data.size()){
-					TableRow tr = new TableRow(data.get(actual));
+					TableRow tr = new TableRow(data.get(actual), actual, actualTable);
 					actual++;
 					rows.add(tr);
 					panel_CENTER.add(tr);
@@ -129,6 +129,20 @@ public class Table extends JPanel {
 		}
 	}
 	
+	public void deleteRow(int toDelete){
+		data.remove(toDelete);
+		if (navigation) {
+			double a = data.size();
+			double b = max;
+			double c = actual;
+			maxPage = (int) Math.ceil(a / b);
+			page = (int) Math.ceil(c / b);
+			fillData(page);
+			cantInfo.setText(page + " de " + maxPage);
+		}			
+		this.revalidate();
+	}
+	
 	public void fillData(int nPage) {
 		rows.clear();
 		panel_CENTER.removeAll();
@@ -136,7 +150,7 @@ public class Table extends JPanel {
 		first = actual = index = (page - 1) * max;
 		first++;
 		for (int i = (page - 1) * max; i < ((page - 1) * max) + max && i < data.size(); i++) {
-			TableRow tr = new TableRow(data.get(i));
+			TableRow tr = new TableRow(data.get(i), i, actualTable);
 			rows.add(tr);
 			panel_CENTER.add(tr);
 		}
