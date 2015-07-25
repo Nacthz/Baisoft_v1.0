@@ -39,7 +39,7 @@ public class Main extends JFrame {
 	public Main() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		setSize(1000, 650);
+		setSize(1000, 635);
 		setLocation(d.width / 2 - this.getSize().width / 2, d.height / 2 - this.getSize().height / 2);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 0, 255));

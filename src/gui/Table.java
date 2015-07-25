@@ -4,39 +4,76 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Table extends JPanel {
 
-	private boolean navigation = false;
-	private int index = 0, first = 0;
-	private int page = 1, maxPage = 1;
-	private int max, heigth = 490;
+	private boolean navigation, searching = false;
+	private int index, first = 0;
+	private int page, maxPage = 1;
+	private int max;
 	private int actual = 0;
 	private JLabel cantInfo;
 	private JPanel panel_CENTER;
 	private static final long serialVersionUID = -2108154469027694188L;
 	private ArrayList<TableRow> rows = new ArrayList<TableRow>();
-	private ArrayList<String[]> data;
+	private ArrayList<String[]> originalData = new ArrayList<String[]>();
+	private ArrayList<String[]> actualData = new ArrayList<String[]>();
 	private Table actualTable = this;
+	private JTextField search;
 
 	public boolean isFocusable() {
 		return true;
 	}
 
+	public void rv() {
+		this.revalidate();
+		this.repaint();
+	}
+	
+	public void search(String match){
+		ArrayList<String[]> ArrayData = new ArrayList<String[]>();
+		match = match.toLowerCase();
+		for(int i = 0; i < originalData.size(); i++){
+			if (originalData.get(i)[1].toLowerCase().contains(match)){
+				ArrayData.add(originalData.get(i));
+			}
+		}
+		actualData.clear();
+		actualData = ArrayData;
+		fillData(1, actualData);
+		double a = actualData.size();
+		double b = max;
+		double c = first;
+		maxPage = (int) Math.ceil(a / b);
+		page = (int) Math.ceil(c / b);
+		cantInfo.setText(page + " de " + maxPage);
+		rv();
+	}
+
+	@SuppressWarnings("unchecked")
 	public Table(int n, ArrayList<String[]> data, String[] title, String[] complements) {
 		this.setBackground(Color.white);
-		this.data = data;
+		this.originalData = (ArrayList<String[]>) data.clone();
+		this.actualData = (ArrayList<String[]>) data.clone();
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel panel_NORTH = new JPanel();
@@ -49,108 +86,142 @@ public class Table extends JPanel {
 		add(panel_CENTER, BorderLayout.CENTER);
 		panel_CENTER.setLayout(new BoxLayout(panel_CENTER, BoxLayout.Y_AXIS));
 
-		max = heigth / 25;
+		JPanel panel_search = new JPanel();
+		panel_search.setLayout(new BorderLayout(0, 0));
 
-		fillData(1);
+		JLabel img1 = new JLabel(new ImageIcon("img/search_west.png"));
+		JLabel img2 = new JLabel(new ImageIcon("img/search_east.png"));
 
-		for (String s : complements) {
-			if (s.equals("navigation")) {
-				addbuttons();
-				cantInfo.setText(page + " de " + Math.round(data.size() / max));
+		search = new JTextField();
+		search.getDocument().addDocumentListener(new DocumentListener() {
+			public void removeUpdate(DocumentEvent e) {
+				if (search.getText().equals("")) {
+					actualData.clear();
+					actualData = (ArrayList<String[]>) originalData.clone();
+					fillData(1, actualData);
+					cantInfo.setText(page + " de " + maxPage);
+					rv();
+				} else {
+					search(search.getText());
+				}
 			}
-		}
+			public void insertUpdate(DocumentEvent e) {
+				search(search.getText());
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+		});
+		search.setBackground(new Color(250, 250, 250));
+		search.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(204, 204, 204)));
+		search.setColumns(20);
 
-		double a = data.size();
-		double b = max;
-		maxPage = (int) Math.ceil(a / b);
+		panel_search.add(search, BorderLayout.CENTER);
+		panel_search.add(img1, BorderLayout.WEST);
+		panel_search.add(img2, BorderLayout.EAST);
+
+		JPanel panel_NORTH_NORTH = new JPanel();
+		panel_NORTH_NORTH.setBackground(new Color(245, 245, 245));
+		panel_NORTH_NORTH.setBorder(new EmptyBorder(3, 5, 3, 5));
+		panel_NORTH.add(panel_NORTH_NORTH, BorderLayout.NORTH);
+		panel_NORTH_NORTH.setLayout(new BorderLayout(0, 0));
+		panel_NORTH_NORTH.add(panel_search, BorderLayout.WEST);
+
+		max = panel_CENTER.getHeight() / 25;
+		for (String s : complements) {
+			if (s.equals("navigation"))
+				addbuttons();
+			if (s.equals("basic"))
+				fillData(1, originalData);
+		}
 
 		panel_CENTER.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				int newCant = panel_CENTER.getHeight() / 25;
 				if (max < newCant) {
-					if(actual < data.size()){
-					TableRow tr = new TableRow(data.get(actual), actual, actualTable);
-					actual++;
-					rows.add(tr);
-					panel_CENTER.add(tr);
+					if (actual < actualData.size()) {
+						TableRow tr = new TableRow(actualData.get(actual), actual, actualTable);
+						actual++;
+						rows.add(tr);
+						panel_CENTER.add(tr);
 					}
 					max = newCant;
 					if (navigation) {
-						double a = data.size();
+						double a = actualData.size();
 						double b = max;
 						double c = actual;
 						maxPage = (int) Math.ceil(a / b);
 						page = (int) Math.ceil(c / b);
 						cantInfo.setText(page + " de " + maxPage);
-						
-						fillData(page);
+
+						fillData(page, actualData);
 					}
 					return;
 				}
 				if (index > newCant) {
 					index--;
 					actual--;
-					panel_CENTER.remove(rows.get(index));
+					panel_CENTER.remove(index);
 					rows.remove(index);
 					max = newCant;
 					if (navigation) {
-						double a = data.size();
+						double a = actualData.size();
 						double b = max;
 						double c = first;
 						maxPage = (int) Math.ceil(a / b);
 						page = (int) Math.ceil(c / b);
 						cantInfo.setText(page + " de " + maxPage);
-						
-						fillData(page);
+
+						fillData(page, actualData);
 					}
 					return;
 				}
-				
-				if(max != newCant){
+
+				if (max != newCant) {
 					max = newCant;
 					if (navigation) {
-						double a = data.size();
+						double a = actualData.size();
 						double b = max;
 						double c = actual;
 						maxPage = (int) Math.ceil(a / b);
 						page = (int) Math.ceil(c / b);
-						fillData(page);
-					}					
+						fillData(page, actualData);
+						cantInfo.setText(page + " de " + maxPage);
+					}
 				}
-				cantInfo.setText(page + " de " + maxPage);
 			}
 		});
 	}
 
-	public void setSelected(boolean status){
-		for(TableRow TR : rows){
+	public void setSelected(boolean status) {
+		for (TableRow TR : rows) {
 			TR.setSelected(status);
 		}
 	}
-	
-	public void deleteRow(int toDelete){
-		data.remove(toDelete);
+
+	public void deleteRow(int toDelete) {
+		actualData.remove(toDelete);
 		if (navigation) {
-			double a = data.size();
+			double a = actualData.size();
 			double b = max;
 			double c = actual;
 			maxPage = (int) Math.ceil(a / b);
 			page = (int) Math.ceil(c / b);
-			fillData(page);
+			fillData(page, actualData);
 			cantInfo.setText(page + " de " + maxPage);
-		}			
+		}
 		this.revalidate();
 	}
-	
-	public void fillData(int nPage) {
+
+	public void fillData(int nPage, ArrayList<String[]> ArrayData) {
 		rows.clear();
 		panel_CENTER.removeAll();
 		page = nPage;
 		first = actual = index = (page - 1) * max;
 		first++;
-		for (int i = (page - 1) * max; i < ((page - 1) * max) + max && i < data.size(); i++) {
-			TableRow tr = new TableRow(data.get(i), i, actualTable);
+		for (int i = (page - 1) * max; i < ((page - 1) * max) + max && i < ArrayData.size(); i++) {
+			TableRow tr = new TableRow(ArrayData.get(i), i, actualTable);
 			rows.add(tr);
 			panel_CENTER.add(tr);
 		}
@@ -184,7 +255,7 @@ public class Table extends JPanel {
 			public void mouseClicked(MouseEvent arg0) {
 				if (page > 1) {
 					page--;
-					fillData(page);
+					fillData(page, actualData);
 					panel_CENTER.revalidate();
 					cantInfo.setText(page + " de " + maxPage);
 				}
@@ -197,7 +268,7 @@ public class Table extends JPanel {
 			public void mouseClicked(MouseEvent arg0) {
 				if (page != 1) {
 					page = 1;
-					fillData(page);
+					fillData(page, actualData);
 					panel_CENTER.revalidate();
 					cantInfo.setText(page + " de " + maxPage);
 				}
@@ -210,7 +281,7 @@ public class Table extends JPanel {
 			public void mouseClicked(MouseEvent arg0) {
 				if (page != maxPage) {
 					page = maxPage;
-					fillData(page);
+					fillData(page, actualData);
 					panel_CENTER.revalidate();
 					cantInfo.setText(page + " de " + maxPage);
 				}
@@ -224,7 +295,7 @@ public class Table extends JPanel {
 			public void mouseClicked(MouseEvent arg0) {
 				if (page < maxPage) {
 					page++;
-					fillData(page);
+					fillData(page, actualData);
 					panel_CENTER.revalidate();
 					cantInfo.setText(page + " de " + maxPage);
 				}
