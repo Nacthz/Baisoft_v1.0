@@ -12,6 +12,7 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
@@ -214,7 +215,14 @@ public class TableRow extends JPanel {
 	}
 
 	public void doDelete() {
-		father.deleteRow(index);
+	    String message = "¿Esta seguro que desea eliminar este elemento?";
+	    String title = "Eliminando: " + backup[1];
+	    // display the JOptionPane showConfirmDialog
+	    int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+	    if (reply == JOptionPane.YES_OPTION)
+	    {
+	    	father.deleteRow(index);
+	    }
 	}
 
 	public boolean isSelected() {

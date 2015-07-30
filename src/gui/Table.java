@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -14,19 +13,16 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JTextField;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class Table extends JPanel {
 
-	private boolean navigation, searching = false;
+	private boolean navigation;
 	private int index, first = 0;
 	private int page, maxPage = 1;
 	private int max;
@@ -57,16 +53,28 @@ public class Table extends JPanel {
 				ArrayData.add(originalData.get(i));
 			}
 		}
-		actualData.clear();
-		actualData = ArrayData;
-		fillData(1, actualData);
-		double a = actualData.size();
-		double b = max;
-		double c = first;
-		maxPage = (int) Math.ceil(a / b);
-		page = (int) Math.ceil(c / b);
-		cantInfo.setText(page + " de " + maxPage);
-		rv();
+		
+		if(ArrayData.size()>0){
+			actualData.clear();
+			actualData = ArrayData;
+			fillData(1, actualData);
+			double a = actualData.size();
+			double b = max;
+			double c = first;
+			maxPage = (int) Math.ceil(a / b);
+			page = (int) Math.ceil(c / b);
+			cantInfo.setText(page + " de " + maxPage);
+			rv();			
+		}else{
+			actualData.clear();
+			panel_CENTER.removeAll();
+			maxPage = 0;
+			page = 0;
+			cantInfo.setText(page + " de " + maxPage);
+			rv();
+		}
+		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -99,7 +107,15 @@ public class Table extends JPanel {
 					actualData.clear();
 					actualData = (ArrayList<String[]>) originalData.clone();
 					fillData(1, actualData);
-					cantInfo.setText(page + " de " + maxPage);
+					if (navigation) {
+						double a = actualData.size();
+						double b = max;
+						double c = actual;
+						maxPage = (int) Math.ceil(a / b);
+						page = (int) Math.ceil(c / b);
+						fillData(page, actualData);
+						cantInfo.setText(page + " de " + maxPage);
+					}
 					rv();
 				} else {
 					search(search.getText());
