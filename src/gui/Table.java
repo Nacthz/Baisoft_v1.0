@@ -26,6 +26,7 @@ public class Table extends JPanel {
 	private int index, first = 0;
 	private int page, maxPage = 1;
 	private int max;
+	private int searchTable = 1;
 	private int actual = 0;
 	private JLabel cantInfo;
 	private JPanel panel_CENTER;
@@ -45,11 +46,15 @@ public class Table extends JPanel {
 		this.repaint();
 	}
 	
+	public void searchOn(int id){
+		searchTable = id;
+	}
+	
 	public void search(String match){
 		ArrayList<String[]> ArrayData = new ArrayList<String[]>();
 		match = match.toLowerCase();
 		for(int i = 0; i < originalData.size(); i++){
-			if (originalData.get(i)[1].toLowerCase().contains(match)){
+			if (originalData.get(i)[searchTable].toLowerCase().contains(match)){
 				ArrayData.add(originalData.get(i));
 			}
 		}
@@ -78,7 +83,7 @@ public class Table extends JPanel {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Table(int n, ArrayList<String[]> data, String[] title, String[] complements) {
+	public Table(ArrayList<String[]> data, String[] title, String[] complements) {        
 		this.setBackground(Color.white);
 		this.originalData = (ArrayList<String[]>) data.clone();
 		this.actualData = (ArrayList<String[]>) data.clone();
@@ -137,7 +142,6 @@ public class Table extends JPanel {
 		panel_search.add(img2, BorderLayout.EAST);
 
 		JPanel panel_NORTH_NORTH = new JPanel();
-		panel_NORTH_NORTH.setBackground(new Color(245, 245, 245));
 		panel_NORTH_NORTH.setBorder(new EmptyBorder(3, 5, 3, 5));
 		panel_NORTH.add(panel_NORTH_NORTH, BorderLayout.NORTH);
 		panel_NORTH_NORTH.setLayout(new BorderLayout(0, 0));

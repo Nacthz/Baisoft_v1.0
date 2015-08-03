@@ -26,11 +26,13 @@ public class Inventory extends JPanel {
 
 	public Inventory() {
 		setLayout(new BorderLayout(0, 0));
+		setBackground(Color.white);
 
 		JPanel JP_NORTH = new JPanel();
-		JP_NORTH.setBackground(new Color(255, 255, 255));
+		JP_NORTH.setOpaque(false);
+		JP_NORTH.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(12, 180, 204)));
 		add(JP_NORTH, BorderLayout.NORTH);
-		JP_NORTH.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		JP_NORTH.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
 		String[] title = { "Descripción", "Precio de compra", "Precio de venta", "Cantidad" };
 		ArrayList<String[]> data = new ArrayList<String[]>();
@@ -144,12 +146,13 @@ public class Inventory extends JPanel {
 		data.add(new String[] { "108", "Volante", "37781", "50977", "102" });
 
 		String[] complements = { "tools", "navigation", "inventory" };
-		int cant = 19;
-		JPanel JP_CENTER = new Table(cant, data, title, complements);
-		add(JP_CENTER, BorderLayout.CENTER);
+		JPanel table = new Table(data, title, complements);
+		add(table, BorderLayout.CENTER);
 		// Buttons
 		JLabel JL_activos = new JLabel("Activos");
-		JLabel JL_todos = new JLabel("Eliminados");
+		JL_activos.setBackground(Color.white);
+		JLabel JL_todos = new JLabel("Todos");
+		JL_todos.setBackground(Color.white);
 
 		JL_activos.addMouseListener(new MouseAdapter() {
 			@Override
@@ -199,20 +202,18 @@ public class Inventory extends JPanel {
 		});
 		JL_todos.setHorizontalAlignment(SwingConstants.CENTER);
 		JL_todos.setOpaque(true);
-		JL_todos.setPreferredSize(new Dimension(74, 28));
+		JL_todos.setPreferredSize(new Dimension(64, 28));
 		deselect(JL_todos);
 		JP_NORTH.add(JL_todos);
 	}
 
 	public void select(JComponent o) {
-		o.setBackground(new Color(180, 229, 106));
-		o.setBorder(BorderFactory.createLineBorder(new Color(116, 178, 30)));
-		o.setForeground(new Color(61, 93, 24));
+		o.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 180, 204)));
+		o.setForeground(new Color(2, 34, 34));
 	}
 
 	public void deselect(JComponent o) {
-		o.setBackground(new Color(242, 242, 242));
-		o.setBorder(BorderFactory.createLineBorder(new Color(213, 213, 213)));
+		o.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.white));
 		o.setForeground(new Color(68, 68, 68));
 	}
 

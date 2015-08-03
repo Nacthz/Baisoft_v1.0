@@ -6,10 +6,9 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import gui.MenuButton;
+import views.Bill;
 import views.Inventory;
-
 import java.awt.Color;
 import javax.swing.BoxLayout;
 import java.awt.event.MouseAdapter;
@@ -37,6 +36,7 @@ public class Main extends JFrame {
 	}
 
 	public Main() {
+		this.setTitle("Baisoft");		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		setSize(1000, 635);
@@ -57,8 +57,17 @@ public class Main extends JFrame {
 		menu_panel.removeAll();
 
 		if (name.equals("Inventario")) {
+			menu_panel.removeAll();
 			menu_panel.add(new Inventory());
 			menu_panel.repaint();
+			return;
+		}
+		
+		if (name.equals("Ventas")) {
+			menu_panel.removeAll();
+			menu_panel.add(new Bill());
+			menu_panel.repaint();
+			return;
 		}
 	}
 

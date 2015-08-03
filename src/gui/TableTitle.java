@@ -1,12 +1,15 @@
 package gui;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -15,6 +18,7 @@ import java.awt.event.MouseEvent;
 public class TableTitle extends JPanel {
 	private int height = 30;
 	private boolean actual = true;
+	private JLabel actualSelect = null;
 	private static final long serialVersionUID = -7812049790984436067L;
 	JPanel panel_CENTER_CENTE, panel_CENTER;
 
@@ -67,29 +71,59 @@ public class TableTitle extends JPanel {
 		line_NORTH.setOpaque(true);
 		add(line_NORTH, BorderLayout.NORTH);
 		
-		JLabel line_SOUTH = new JLabel();
-		line_SOUTH.setPreferredSize(new Dimension(Integer.MAX_VALUE, 1));
-		line_SOUTH.setBackground(new Color(196, 196, 196));
-		line_SOUTH.setOpaque(true);
-		add(line_SOUTH, BorderLayout.SOUTH);
+		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(12, 180, 204)));
 		
+		int j = 0;
 		for(String s_title : title){
-			addTitle(s_title);
+			j++;
+			addTitle(j, s_title, father);
 		}
 	}
 	
-	public void addTitle(String name){
+	public void addTitle(int id, String name, Table father){
 		JLabel JL = new JLabel(name);
+		JL.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(actualSelect != JL){
+					father.searchOn(id);
+					deselect(actualSelect);
+					actualSelect = JL;
+					select(JL);
+				}
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		});
 		JL.setOpaque(false);
 		
 		if(actual){
-			JL.setPreferredSize(new Dimension(360, height));
+			JL.setPreferredSize(new Dimension(230, height));
+			select(JL);
+			actualSelect = JL;
 			panel_CENTER.add(JL, BorderLayout.WEST);
 			actual=false;
 			return;
 		}		
 		JL.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_CENTER_CENTE.add(JL);
+	}
+	
+	public void select(JComponent o) {
+		o.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 180, 204)));
+		o.setForeground(new Color(2, 34, 34));
+	}
+
+	public void deselect(JComponent o) {
+		o.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.white));
+		o.setForeground(new Color(68, 68, 68));
 	}
 }
 

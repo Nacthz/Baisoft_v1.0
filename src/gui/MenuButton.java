@@ -23,10 +23,6 @@ public class MenuButton extends JPanel {
 	private String icon_name = "";
 	public String name = "";
 
-	/**
-	 * @wbp.parser.constructor
-	 */
-
 	public MenuButton(String icon_name, String text) {
 		this.icon_name = icon_name;
 		this.name = text;
@@ -42,7 +38,7 @@ public class MenuButton extends JPanel {
 		add(selected_0, BorderLayout.WEST);
 
 		selected = new JLabel();
-		selected.setBackground(new Color(90, 71, 154));
+		selected.setBackground(new Color(8, 115, 170));
 		setTrueSize(selected, 4, 32);
 		selected.setOpaque(true);
 		selected.setVisible(false);

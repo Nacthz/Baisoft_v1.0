@@ -184,7 +184,7 @@ public class TableRow extends JPanel {
 		info.add(JTF);
 
 		if (first) {
-			JTF.setPreferredSize(new Dimension(360, height));
+			JTF.setPreferredSize(new Dimension(230, height));
 			panel_CENTER.add(JTF, BorderLayout.WEST);
 			first = false;
 			return;
