@@ -146,7 +146,7 @@ public class Inventory extends JPanel {
 		data.add(new String[] { "108", "Volante", "37781", "50977", "102" });
 
 		String[] complements = { "tools", "navigation", "inventory" };
-		JPanel table = new Table(data, title, complements);
+		JPanel table = new Table(data, title, complements, false);
 		add(table, BorderLayout.CENTER);
 		// Buttons
 		JLabel JL_activos = new JLabel("Activos");

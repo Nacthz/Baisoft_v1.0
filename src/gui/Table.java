@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 
 public class Table extends JPanel {
 
-	private boolean navigation;
+	private boolean navigation, flag = false;
 	private int index, first = 0;
 	private int page, maxPage = 1;
 	private int max;
@@ -83,7 +83,8 @@ public class Table extends JPanel {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Table(ArrayList<String[]> data, String[] title, String[] complements) {        
+	public Table(ArrayList<String[]> data, String[] title, String[] complements, boolean flag) {
+		this.flag = flag;
 		this.setBackground(Color.white);
 		this.originalData = (ArrayList<String[]>) data.clone();
 		this.actualData = (ArrayList<String[]>) data.clone();
@@ -92,7 +93,7 @@ public class Table extends JPanel {
 		JPanel panel_NORTH = new JPanel();
 		panel_NORTH.setLayout(new BorderLayout(0, 0));
 		add(panel_NORTH, BorderLayout.NORTH);
-		panel_NORTH.add(new TableTitle(title, this), BorderLayout.CENTER);
+		panel_NORTH.add(new TableTitle(title, this,flag), BorderLayout.CENTER);
 
 		panel_CENTER = new JPanel();
 		panel_CENTER.setOpaque(false);
@@ -161,7 +162,7 @@ public class Table extends JPanel {
 				int newCant = panel_CENTER.getHeight() / 25;
 				if (max < newCant) {
 					if (actual < actualData.size()) {
-						TableRow tr = new TableRow(actualData.get(actual), actual, actualTable);
+						TableRow tr = new TableRow(actualData.get(actual), actual, actualTable, flag);
 						actual++;
 						rows.add(tr);
 						panel_CENTER.add(tr);
@@ -241,7 +242,7 @@ public class Table extends JPanel {
 		first = actual = index = (page - 1) * max;
 		first++;
 		for (int i = (page - 1) * max; i < ((page - 1) * max) + max && i < ArrayData.size(); i++) {
-			TableRow tr = new TableRow(ArrayData.get(i), i, actualTable);
+			TableRow tr = new TableRow(ArrayData.get(i), i, actualTable, flag);
 			rows.add(tr);
 			panel_CENTER.add(tr);
 		}

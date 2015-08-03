@@ -22,7 +22,7 @@ public class TableTitle extends JPanel {
 	private static final long serialVersionUID = -7812049790984436067L;
 	JPanel panel_CENTER_CENTE, panel_CENTER;
 
-	public TableTitle(String[] title, Table father) {
+	public TableTitle(String[] title, Table father, boolean flag) {
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(248, 248, 248));
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
@@ -60,7 +60,10 @@ public class TableTitle extends JPanel {
 		panel_CENTER.setLayout(new BorderLayout(0, 0));
 		
 		panel_CENTER_CENTE = new JPanel();
-		panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 50));
+		if(flag)
+			panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 100));
+		else
+			panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 50));
 		panel_CENTER_CENTE.setOpaque(false);
 		panel_CENTER.add(panel_CENTER_CENTE, BorderLayout.CENTER);
 		panel_CENTER_CENTE.setLayout(new GridLayout(1, 0, 0, 0));

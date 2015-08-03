@@ -187,7 +187,7 @@ public class Bill extends JPanel {
 		data.add(new String[] { "55", "LLENPEN NUÑEZ, ORFELINA", "3/01/2015", "168214" });
 
 		String[] complements = { "tools", "navigation", "inventory" };
-		return new Table(data, title, complements);
+		return new Table(data, title, complements, true);
 	}
 	
 	public Table sincroautos(){
@@ -252,6 +252,6 @@ public class Bill extends JPanel {
 
 
 		String[] complements = { "tools", "navigation", "inventory" };
-		return new Table(data, title, complements);
+		return new Table(data, title, complements, true);
 	}
 }

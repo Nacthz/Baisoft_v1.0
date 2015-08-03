@@ -32,7 +32,7 @@ public class TableRow extends JPanel {
 	private String[] backup = {};
 	private Table father;
 
-	public TableRow(String[] data, int index, Table father) {
+	public TableRow(String[] data, int index, Table father, boolean flag) {
 		this.father = father;
 		this.index = index;
 		backup = data;
@@ -79,13 +79,20 @@ public class TableRow extends JPanel {
 		JPanel panel_EAST = new JPanel();
 		panel_EAST.setBorder(new EmptyBorder(0, 0, 0, 10));
 		panel_EAST.setOpaque(false);
-		panel_EAST.setPreferredSize(new Dimension(50, height));
+		if(flag){
+			panel_EAST.setPreferredSize(new Dimension(100, height));			
+		}else{
+			panel_EAST.setPreferredSize(new Dimension(50, height));			
+		}
+
 		add(panel_EAST, BorderLayout.EAST);
-		panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
+		if(flag)
+			panel_EAST.setLayout(new GridLayout(0, 4, 0, 0));
+		else
+			panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
 
 		JLabel JL_delete = new JLabel(new ImageIcon("img/trash.png"));
-		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
-		
+		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));		
 		JL_delete.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -122,8 +129,6 @@ public class TableRow extends JPanel {
 			}
 		});
 		JL_delete.setOpaque(false);
-
-		
 		JL_edit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -168,6 +173,14 @@ public class TableRow extends JPanel {
 
 		for (int i = 1; i < data.length; i++) {
 			addCamp(data[i]);
+		}
+		
+		if(flag){
+			JLabel JL_download = new JLabel(new ImageIcon("img/download.png"));
+			JLabel JL_view = new JLabel(new ImageIcon("img/views.png"));	
+			
+			panel_EAST.add(JL_view);
+			panel_EAST.add(JL_download);
 		}
 
 		panel_EAST.add(JL_edit);
