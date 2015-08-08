@@ -35,7 +35,7 @@ public class TableRow extends JPanel {
 	public TableRow(String[] data, int index, Table father, boolean flag) {
 		this.father = father;
 		this.index = index;
-		backup = data;
+		backup = data.clone();
 		addMouseListener(mouseEvent());
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(255, 255, 255));
@@ -79,39 +79,48 @@ public class TableRow extends JPanel {
 		JPanel panel_EAST = new JPanel();
 		panel_EAST.setBorder(new EmptyBorder(0, 0, 0, 10));
 		panel_EAST.setOpaque(false);
-		if(flag){
-			panel_EAST.setPreferredSize(new Dimension(100, height));			
-		}else{
-			panel_EAST.setPreferredSize(new Dimension(50, height));			
+		if (flag) {
+			panel_EAST.setPreferredSize(new Dimension(100, height));
+		} else {
+			panel_EAST.setPreferredSize(new Dimension(50, height));
 		}
 
 		add(panel_EAST, BorderLayout.EAST);
-		if(flag)
+		if (flag)
 			panel_EAST.setLayout(new GridLayout(0, 4, 0, 0));
 		else
 			panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
 
-		JLabel JL_delete = new JLabel(new ImageIcon("img/trash.png"));
-		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));		
+		JLabel JL_delete;
+
+		if (data[2].equals("eliminado"))
+			JL_delete = new JLabel(new ImageIcon("img/fileback.png"));
+		else
+			JL_delete = new JLabel(new ImageIcon("img/trash.png"));
+
+		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
 		JL_delete.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (edit) {
-					edit = !edit;
-					int i = 1;
-					for (JTextComponent ob : info) {
-						ob.setText(backup[i]);
-						ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
-						ob.setEditable(edit);
-						i++;
+				if (!data[2].equals("eliminado")){
+					if (edit) {
+						edit = !edit;
+						int i = 1;
+						for (JTextComponent ob : info) {
+							ob.setText(backup[i]);
+							ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
+							ob.setEditable(edit);
+							i++;
+						}
+
+						JL_edit.setIcon(new ImageIcon("img/pencil.png"));
+						JL_delete.setIcon(new ImageIcon("img/trash.png"));
+					} else {
+						doDelete();
 					}
-					
-					JL_edit.setIcon(new ImageIcon("img/pencil.png"));
-					JL_delete.setIcon(new ImageIcon("img/trash.png"));
-				} else {
-					doDelete();
-					// TODO hacer el eliminar
 				}
+				else
+					doEnable();
 			}
 
 			@Override
@@ -150,7 +159,7 @@ public class TableRow extends JPanel {
 						backup[i] = ob.getText();
 						i++;
 					}
-					// TODO Hacer el update en la base de datos
+					father.updateRow(index, backup);
 					JL_edit.setIcon(new ImageIcon("img/pencil.png"));
 					JL_delete.setIcon(new ImageIcon("img/trash.png"));
 				}
@@ -174,11 +183,48 @@ public class TableRow extends JPanel {
 		for (int i = 1; i < data.length; i++) {
 			addCamp(data[i]);
 		}
-		
-		if(flag){
+
+		if (flag) {
 			JLabel JL_download = new JLabel(new ImageIcon("img/download.png"));
-			JLabel JL_view = new JLabel(new ImageIcon("img/views.png"));	
-			
+			JL_download.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					if (!edit)
+						setBackground(new Color(230, 230, 230));
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					if (!edit)
+						setBackground(new Color(255, 255, 255));
+				}
+			});
+			JLabel JL_view = new JLabel(new ImageIcon("img/views.png"));
+			JL_view.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					if (!edit)
+						setBackground(new Color(230, 230, 230));
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					if (!edit)
+						setBackground(new Color(255, 255, 255));
+				}
+			});
 			panel_EAST.add(JL_view);
 			panel_EAST.add(JL_download);
 		}
@@ -226,16 +272,25 @@ public class TableRow extends JPanel {
 	public void setSelected(boolean status) {
 		check.setSelected(status);
 	}
+	
+	public void doEnable(){
+		String message = "¿Esta seguro que desea habilitar este elemento?";
+		String title = "Habilitando: " + backup[1];
+		// display the JOptionPane showConfirmDialog
+		int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+		if (reply == JOptionPane.YES_OPTION) {
+			father.enableRow(index, backup[0]);
+		}	
+	}
 
 	public void doDelete() {
-	    String message = "¿Esta seguro que desea eliminar este elemento?";
-	    String title = "Eliminando: " + backup[1];
-	    // display the JOptionPane showConfirmDialog
-	    int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-	    if (reply == JOptionPane.YES_OPTION)
-	    {
-	    	father.deleteRow(index);
-	    }
+		String message = "¿Esta seguro que desea eliminar este elemento?";
+		String title = "Eliminando: " + backup[1];
+		// display the JOptionPane showConfirmDialog
+		int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+		if (reply == JOptionPane.YES_OPTION) {
+			father.deleteRow(index, backup[0]);
+		}
 	}
 
 	public boolean isSelected() {

@@ -105,8 +105,6 @@ public class Bill extends JPanel {
 		JL_sincrorepuestos.setPreferredSize(new Dimension(115, 28));
 		deselect(JL_sincrorepuestos);
 		JP_NORTH.add(JL_sincrorepuestos);
-		
-
 	}
 
 	public void select(JComponent o) {
@@ -186,8 +184,11 @@ public class Bill extends JPanel {
 		data.add(new String[] { "54", "LLAJA TAFUR, ROBERTO JULIAN", "4/01/2015", "438920" });
 		data.add(new String[] { "55", "LLENPEN NUÑEZ, ORFELINA", "3/01/2015", "168214" });
 
-		String[] complements = { "tools", "navigation", "inventory" };
-		return new Table(data, title, complements, true);
+		boolean search = true;
+		boolean advanceIcons = true;
+		boolean navigation = true;
+		int limitedRows = 0;
+		return new Table("Bill_2", data, title, navigation, search, advanceIcons, limitedRows);
 	}
 	
 	public Table sincroautos(){
@@ -250,8 +251,10 @@ public class Bill extends JPanel {
 		data.add(new String[] { "54", "HORRUITINER MARTINEZ, GUILLERMO", "AAD82", "4/01/2015", "190429" });
 		data.add(new String[] { "55", "HUAMANI FLORES, LOURDES", "AAE31", "3/01/2015", "338351" });
 
-
-		String[] complements = { "tools", "navigation", "inventory" };
-		return new Table(data, title, complements, true);
+		boolean search = true;
+		boolean advanceIcons = true;
+		boolean navigation = true;
+		int limitedRows = 0;
+		return new Table("Bill_1", data, title, navigation, search, advanceIcons, limitedRows);
 	}
 }

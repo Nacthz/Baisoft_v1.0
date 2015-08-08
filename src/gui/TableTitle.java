@@ -22,7 +22,7 @@ public class TableTitle extends JPanel {
 	private static final long serialVersionUID = -7812049790984436067L;
 	JPanel panel_CENTER_CENTE, panel_CENTER;
 
-	public TableTitle(String[] title, Table father, boolean flag) {
+	public TableTitle(String[] title, Table father, boolean icons, boolean search) {
 		setLayout(new BorderLayout(0, 0));
 		setBackground(new Color(248, 248, 248));
 		setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
@@ -60,10 +60,12 @@ public class TableTitle extends JPanel {
 		panel_CENTER.setLayout(new BorderLayout(0, 0));
 		
 		panel_CENTER_CENTE = new JPanel();
-		if(flag)
+		
+		if(icons)
 			panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 100));
 		else
 			panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 50));
+		
 		panel_CENTER_CENTE.setOpaque(false);
 		panel_CENTER.add(panel_CENTER_CENTE, BorderLayout.CENTER);
 		panel_CENTER_CENTE.setLayout(new GridLayout(1, 0, 0, 0));
@@ -79,16 +81,16 @@ public class TableTitle extends JPanel {
 		int j = 0;
 		for(String s_title : title){
 			j++;
-			addTitle(j, s_title, father);
+			addTitle(j, s_title, father, search);
 		}
 	}
 	
-	public void addTitle(int id, String name, Table father){
+	public void addTitle(int id, String name, Table father, boolean search){
 		JLabel JL = new JLabel(name);
 		JL.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(actualSelect != JL){
+				if(actualSelect != JL && search){
 					father.searchOn(id);
 					deselect(actualSelect);
 					actualSelect = JL;
@@ -107,7 +109,7 @@ public class TableTitle extends JPanel {
 		});
 		JL.setOpaque(false);
 		
-		if(actual){
+		if(actual && search){
 			JL.setPreferredSize(new Dimension(230, height));
 			select(JL);
 			actualSelect = JL;

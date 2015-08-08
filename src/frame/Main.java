@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import gui.MenuButton;
 import views.Bill;
 import views.Inventory;
+import views.Sincrorepuestos;
+
 import java.awt.Color;
 import javax.swing.BoxLayout;
 import java.awt.event.MouseAdapter;
@@ -66,6 +68,13 @@ public class Main extends JFrame {
 		if (name.equals("Ventas")) {
 			menu_panel.removeAll();
 			menu_panel.add(new Bill());
+			menu_panel.repaint();
+			return;
+		}
+		
+		if (name.equals("Sincrorepuestos")) {
+			menu_panel.removeAll();
+			menu_panel.add(new Sincrorepuestos());
 			menu_panel.repaint();
 			return;
 		}

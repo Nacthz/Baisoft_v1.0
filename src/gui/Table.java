@@ -13,6 +13,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import db.MySQLConnection;
+
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -22,20 +25,18 @@ import javax.swing.JTextField;
 
 public class Table extends JPanel {
 
-	private boolean navigation, flag = false;
-	private int index, first = 0;
-	private int page, maxPage = 1;
-	private int max;
-	private int searchTable = 1;
-	private int actual = 0;
+	private static final long serialVersionUID = -2108154469027694188L;
+
+	private boolean navigation, icons = false;
+	private String father;
+	private int page, max, index, first = 0, actual = 0, maxPage = 1, searchTable = 1;
 	private JLabel cantInfo;
 	private JPanel panel_CENTER;
-	private static final long serialVersionUID = -2108154469027694188L;
+	private Table actualTable = this;
+	private JTextField JTF_Search;
 	private ArrayList<TableRow> rows = new ArrayList<TableRow>();
 	private ArrayList<String[]> originalData = new ArrayList<String[]>();
 	private ArrayList<String[]> actualData = new ArrayList<String[]>();
-	private Table actualTable = this;
-	private JTextField search;
 
 	public boolean isFocusable() {
 		return true;
@@ -45,21 +46,21 @@ public class Table extends JPanel {
 		this.revalidate();
 		this.repaint();
 	}
-	
-	public void searchOn(int id){
+
+	public void searchOn(int id) {
 		searchTable = id;
 	}
-	
-	public void search(String match){
+
+	public void search(String match) {
 		ArrayList<String[]> ArrayData = new ArrayList<String[]>();
 		match = match.toLowerCase();
-		for(int i = 0; i < originalData.size(); i++){
-			if (originalData.get(i)[searchTable].toLowerCase().contains(match)){
+		for (int i = 0; i < originalData.size(); i++) {
+			if (originalData.get(i)[searchTable].toLowerCase().contains(match)) {
 				ArrayData.add(originalData.get(i));
 			}
 		}
-		
-		if(ArrayData.size()>0){
+
+		if (ArrayData.size() > 0) {
 			actualData.clear();
 			actualData = ArrayData;
 			fillData(1, actualData);
@@ -69,8 +70,8 @@ public class Table extends JPanel {
 			maxPage = (int) Math.ceil(a / b);
 			page = (int) Math.ceil(c / b);
 			cantInfo.setText(page + " de " + maxPage);
-			rv();			
-		}else{
+			rv();
+		} else {
 			actualData.clear();
 			panel_CENTER.removeAll();
 			maxPage = 0;
@@ -78,22 +79,25 @@ public class Table extends JPanel {
 			cantInfo.setText(page + " de " + maxPage);
 			rv();
 		}
-		
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public Table(ArrayList<String[]> data, String[] title, String[] complements, boolean flag) {
-		this.flag = flag;
-		this.setBackground(Color.white);
+	public Table(String father, ArrayList<String[]> data, String[] title, boolean navigation, boolean search,
+			boolean icons, int cant) {
+		this.father = father;
+		this.icons = icons;
+		this.navigation = navigation;
 		this.originalData = (ArrayList<String[]>) data.clone();
 		this.actualData = (ArrayList<String[]>) data.clone();
 		setLayout(new BorderLayout(0, 0));
+		setBackground(Color.white);
 
 		JPanel panel_NORTH = new JPanel();
 		panel_NORTH.setLayout(new BorderLayout(0, 0));
 		add(panel_NORTH, BorderLayout.NORTH);
-		panel_NORTH.add(new TableTitle(title, this,flag), BorderLayout.CENTER);
+
+		panel_NORTH.add(new TableTitle(title, actualTable, icons, search), BorderLayout.CENTER);
 
 		panel_CENTER = new JPanel();
 		panel_CENTER.setOpaque(false);
@@ -106,55 +110,59 @@ public class Table extends JPanel {
 		JLabel img1 = new JLabel(new ImageIcon("img/search_west.png"));
 		JLabel img2 = new JLabel(new ImageIcon("img/search_east.png"));
 
-		search = new JTextField();
-		search.getDocument().addDocumentListener(new DocumentListener() {
-			public void removeUpdate(DocumentEvent e) {
-				if (search.getText().equals("")) {
-					actualData.clear();
-					actualData = (ArrayList<String[]>) originalData.clone();
-					fillData(1, actualData);
-					if (navigation) {
-						double a = actualData.size();
-						double b = max;
-						double c = actual;
-						maxPage = (int) Math.ceil(a / b);
-						page = (int) Math.ceil(c / b);
-						fillData(page, actualData);
-						cantInfo.setText(page + " de " + maxPage);
-					}
-					rv();
-				} else {
-					search(search.getText());
-				}
-			}
-			public void insertUpdate(DocumentEvent e) {
-				search(search.getText());
-			}
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-			}
-		});
-		search.setBackground(new Color(250, 250, 250));
-		search.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(204, 204, 204)));
-		search.setColumns(20);
-
-		panel_search.add(search, BorderLayout.CENTER);
-		panel_search.add(img1, BorderLayout.WEST);
-		panel_search.add(img2, BorderLayout.EAST);
-
 		JPanel panel_NORTH_NORTH = new JPanel();
 		panel_NORTH_NORTH.setBorder(new EmptyBorder(3, 5, 3, 5));
 		panel_NORTH.add(panel_NORTH_NORTH, BorderLayout.NORTH);
 		panel_NORTH_NORTH.setLayout(new BorderLayout(0, 0));
-		panel_NORTH_NORTH.add(panel_search, BorderLayout.WEST);
+
+		if (search) {
+			JTF_Search = new JTextField();
+			JTF_Search.getDocument().addDocumentListener(new DocumentListener() {
+				public void removeUpdate(DocumentEvent e) {
+					if (JTF_Search.getText().equals("")) {
+						actualData.clear();
+						actualData = (ArrayList<String[]>) originalData.clone();
+						fillData(1, actualData);
+						if (navigation) {
+							double a = actualData.size();
+							double b = max;
+							double c = actual;
+							maxPage = (int) Math.ceil(a / b);
+							page = (int) Math.ceil(c / b);
+							fillData(page, actualData);
+							cantInfo.setText(page + " de " + maxPage);
+						}
+						rv();
+					} else {
+						search(JTF_Search.getText());
+					}
+				}
+
+				public void insertUpdate(DocumentEvent e) {
+					search(JTF_Search.getText());
+				}
+
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+				}
+			});
+			JTF_Search.setBackground(new Color(250, 250, 250));
+			JTF_Search.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(204, 204, 204)));
+			JTF_Search.setColumns(20);
+
+			panel_search.add(JTF_Search, BorderLayout.CENTER);
+			panel_search.add(img1, BorderLayout.WEST);
+			panel_search.add(img2, BorderLayout.EAST);
+			panel_NORTH_NORTH.add(panel_search, BorderLayout.WEST);
+		}
 
 		max = panel_CENTER.getHeight() / 25;
-		for (String s : complements) {
-			if (s.equals("navigation"))
-				addbuttons();
-			if (s.equals("basic"))
-				fillData(1, originalData);
+
+		if (navigation) {
+			addbuttons();
 		}
+
+		fillData(1, originalData);
 
 		panel_CENTER.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -162,7 +170,7 @@ public class Table extends JPanel {
 				int newCant = panel_CENTER.getHeight() / 25;
 				if (max < newCant) {
 					if (actual < actualData.size()) {
-						TableRow tr = new TableRow(actualData.get(actual), actual, actualTable, flag);
+						TableRow tr = new TableRow(actualData.get(actual), actual, actualTable, icons);
 						actual++;
 						rows.add(tr);
 						panel_CENTER.add(tr);
@@ -221,8 +229,17 @@ public class Table extends JPanel {
 		}
 	}
 
-	public void deleteRow(int toDelete) {
-		actualData.remove(toDelete);
+	public void enableRow(int toEnable, String itemID) {
+		actualData.get(toEnable)[2] = "activo";
+		reload();
+		String sql;
+
+		sql = "UPDATE `inventory_item` SET `inventory_item_status` = '1' WHERE `inventory_item_id` = '" + itemID + "'";
+		System.out.println(sql);
+		MySQLConnection.deleteItem(sql);
+	}
+
+	public void reload(){
 		if (navigation) {
 			double a = actualData.size();
 			double b = max;
@@ -234,6 +251,61 @@ public class Table extends JPanel {
 		}
 		this.revalidate();
 	}
+	
+	public void updateRow(int toWork, String[] updateData){
+		String sql;
+		if (father.equals("inventory")) {
+			sql = "UPDATE `inventory_item` SET `inventory_item_description` = '"+updateData[1]+"', `inventory_item_quantity` = '"+updateData[2]+"', `inventory_item_sale_price` = '"+updateData[3]+"', `inventory_item_price` = '"+updateData[4]+"' WHERE `inventory_item_id` = '"+updateData[0]+"';";
+			System.out.println(sql);
+			MySQLConnection.deleteItem(sql);
+			
+			int s = 0;
+			for(String a : updateData){
+				actualData.get(toWork)[s] = a; 
+				s++;
+			}
+			reload();			
+			return;
+		}
+
+		if (father.equals("inventory_all")) {
+			sql = "UPDATE `inventory_item` SET `inventory_item_description` = '"+updateData[1]+"', `inventory_item_quantity` = '"+updateData[3]+"', `inventory_item_sale_price` = '"+updateData[4]+"', `inventory_item_price` = '"+updateData[5]+"' WHERE `inventory_item_id` = '"+updateData[0]+"';";
+			System.out.println(sql);
+			MySQLConnection.deleteItem(sql);
+			
+			int s = 0;
+			for(String a : updateData){
+				if(s!=2)
+				actualData.get(toWork)[s] = a; 
+				s++;
+			}
+			reload();			
+			return;
+		}		
+	}
+	
+	public void deleteRow(int toWork, String itemID) {
+		String sql;
+		if (father.equals("inventory")) {
+			sql = "UPDATE `inventory_item` SET `inventory_item_status` = '0' WHERE `inventory_item_id` = '" + itemID
+					+ "'";
+			System.out.println(sql);
+			MySQLConnection.deleteItem(sql);
+			actualData.remove(toWork);
+			reload();
+			return;
+		}
+
+		if (father.equals("inventory_all")) {
+			sql = "UPDATE `inventory_item` SET `inventory_item_status` = '0' WHERE `inventory_item_id` = '" + itemID
+					+ "'";
+			System.out.println(sql);
+			MySQLConnection.deleteItem(sql);
+			actualData.get(toWork)[2] = "eliminado";
+			reload();			
+			return;
+		}
+	}
 
 	public void fillData(int nPage, ArrayList<String[]> ArrayData) {
 		rows.clear();
@@ -242,7 +314,7 @@ public class Table extends JPanel {
 		first = actual = index = (page - 1) * max;
 		first++;
 		for (int i = (page - 1) * max; i < ((page - 1) * max) + max && i < ArrayData.size(); i++) {
-			TableRow tr = new TableRow(ArrayData.get(i), i, actualTable, flag);
+			TableRow tr = new TableRow(ArrayData.get(i), i, actualTable, icons);
 			rows.add(tr);
 			panel_CENTER.add(tr);
 		}
