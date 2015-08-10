@@ -19,9 +19,13 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
 
+import views.Sincrorepuestos;
+
 public class TableRow extends JPanel {
 
 	private int height = 25;
+	@SuppressWarnings("unused")
+	private JPanel jFather;
 	private int index = 0;
 	private boolean edit, first = true;
 	private static final long serialVersionUID = 6359330881452231410L;
@@ -32,8 +36,9 @@ public class TableRow extends JPanel {
 	private String[] backup = {};
 	private Table father;
 
-	public TableRow(String[] data, int index, Table father, boolean flag) {
+	public TableRow(JPanel jFather, String[] data, int index, Table father, boolean flag) {
 		this.father = father;
+		this.jFather = jFather;
 		this.index = index;
 		backup = data.clone();
 		addMouseListener(mouseEvent());
@@ -48,11 +53,12 @@ public class TableRow extends JPanel {
 		add(panel_WEST, BorderLayout.WEST);
 		panel_WEST.setLayout(new BorderLayout(0, 0));
 
-		check = new JCheckBox();
-		check.addMouseListener(mouseEvent());
-		check.setOpaque(false);
-		panel_WEST.add(check, BorderLayout.WEST);
-
+		if (!father.father.equals("sincrorepuestos_search")) {
+			check = new JCheckBox();
+			check.addMouseListener(mouseEvent());
+			check.setOpaque(false);
+			panel_WEST.add(check, BorderLayout.WEST);
+		}
 		id = new JLabel(data[0]);
 		id.setHorizontalAlignment(SwingConstants.CENTER);
 		id.setPreferredSize(new Dimension(35, height));
@@ -79,116 +85,59 @@ public class TableRow extends JPanel {
 		JPanel panel_EAST = new JPanel();
 		panel_EAST.setBorder(new EmptyBorder(0, 0, 0, 10));
 		panel_EAST.setOpaque(false);
-		if (flag) {
-			panel_EAST.setPreferredSize(new Dimension(100, height));
+
+		if (!father.father.equals("sincrorepuestos_search")) {
+			if (flag) {
+				panel_EAST.setPreferredSize(new Dimension(100, height));
+				panel_EAST.setLayout(new GridLayout(0, 4, 0, 0));
+			} else {
+				panel_EAST.setPreferredSize(new Dimension(50, height));
+				panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
+			}
 		} else {
-			panel_EAST.setPreferredSize(new Dimension(50, height));
+			panel_EAST.setPreferredSize(new Dimension(30, height));
+			panel_EAST.setLayout(new GridLayout(0, 1, 0, 0));
 		}
 
 		add(panel_EAST, BorderLayout.EAST);
-		if (flag)
-			panel_EAST.setLayout(new GridLayout(0, 4, 0, 0));
-		else
-			panel_EAST.setLayout(new GridLayout(0, 2, 0, 0));
-
-		JLabel JL_delete;
-
-		if (data[2].equals("eliminado"))
-			JL_delete = new JLabel(new ImageIcon("img/fileback.png"));
-		else
-			JL_delete = new JLabel(new ImageIcon("img/trash.png"));
-
-		JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
-		JL_delete.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (!data[2].equals("eliminado")){
-					if (edit) {
-						edit = !edit;
-						int i = 1;
-						for (JTextComponent ob : info) {
-							ob.setText(backup[i]);
-							ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
-							ob.setEditable(edit);
-							i++;
-						}
-
-						JL_edit.setIcon(new ImageIcon("img/pencil.png"));
-						JL_delete.setIcon(new ImageIcon("img/trash.png"));
-					} else {
-						doDelete();
-					}
-				}
-				else
-					doEnable();
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				if (!edit)
-					setBackground(new Color(230, 230, 230));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				if (!edit)
-					setBackground(new Color(255, 255, 255));
-			}
-		});
-		JL_delete.setOpaque(false);
-		JL_edit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				edit = !edit;
-
-				if (edit) {
-					for (JTextComponent ob : info) {
-						ob.setFont(new Font("Tahoma", Font.PLAIN, 16));
-						ob.setEditable(edit);
-					}
-					JL_edit.setIcon(new ImageIcon("img/tick.png"));
-					JL_delete.setIcon(new ImageIcon("img/cross.png"));
-
-				} else {
-					int i = 1;
-					for (JTextComponent ob : info) {
-						ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
-						ob.setEditable(edit);
-						backup[i] = ob.getText();
-						i++;
-					}
-					father.updateRow(index, backup);
-					JL_edit.setIcon(new ImageIcon("img/pencil.png"));
-					JL_delete.setIcon(new ImageIcon("img/trash.png"));
-				}
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				if (!edit)
-					setBackground(new Color(230, 230, 230));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				if (!edit)
-					setBackground(new Color(255, 255, 255));
-			}
-		});
 
 		for (int i = 1; i < data.length; i++) {
 			addCamp(data[i]);
 		}
 
-		if (flag) {
-			JLabel JL_download = new JLabel(new ImageIcon("img/download.png"));
-			JL_download.addMouseListener(new MouseAdapter() {
+		if (!father.father.equals("sincrorepuestos_search")) {
+			JLabel JL_delete;
+			if (data.length > 2) {
+				if (data[2].equals("eliminado"))
+					JL_delete = new JLabel(new ImageIcon("img/fileback.png"));
+				else
+					JL_delete = new JLabel(new ImageIcon("img/trash.png"));
+			} else {
+				JL_delete = new JLabel(new ImageIcon("img/trash.png"));
+			}
+
+			JLabel JL_edit = new JLabel(new ImageIcon("img/pencil.png"));
+			JL_delete.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					if (!data[2].equals("eliminado")) {
+						if (edit) {
+							edit = !edit;
+							int i = 1;
+							for (JTextComponent ob : info) {
+								ob.setText(backup[i]);
+								ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
+								ob.setEditable(edit);
+								i++;
+							}
+
+							JL_edit.setIcon(new ImageIcon("img/pencil.png"));
+							JL_delete.setIcon(new ImageIcon("img/trash.png"));
+						} else {
+							doDelete();
+						}
+					} else
+						doEnable();
 				}
 
 				@Override
@@ -205,10 +154,60 @@ public class TableRow extends JPanel {
 						setBackground(new Color(255, 255, 255));
 				}
 			});
-			JLabel JL_view = new JLabel(new ImageIcon("img/views.png"));
-			JL_view.addMouseListener(new MouseAdapter() {
+			JL_delete.setOpaque(false);
+			JL_edit.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					edit = !edit;
+					if (edit) {
+						int i = 0;						
+						for (JTextComponent ob : info) {
+							ob.setFont(new Font("Tahoma", Font.PLAIN, 16));
+							
+							if(father.father.equals("sincrorepuestos")){
+								i++;
+								if(!(i == 3 || i == 4))
+									ob.setEditable(edit);
+							}else{
+								ob.setEditable(edit);
+							}
+							
+						}
+						JL_edit.setIcon(new ImageIcon("img/tick.png"));
+						JL_delete.setIcon(new ImageIcon("img/cross.png"));
+
+					} else {
+						int i = 1, a = 0 , b = 0;
+						JTextComponent temp = null;
+						for (JTextComponent ob : info) {
+							ob.setFont(new Font("Tahoma", Font.PLAIN, 12));
+							ob.setEditable(edit);
+							backup[i] = ob.getText();
+							
+							if(father.father.equals("sincrorepuestos")){
+								if(i == 2 ){
+									a = Integer.parseInt(backup[i]); 
+								}
+								if(i == 3 ){
+									b = Integer.parseInt(backup[i]); 
+								}
+								
+								if(i == 4 ){
+									temp = ob;
+								}
+							}
+							i++;
+						}	
+						
+						if(father.father.equals("sincrorepuestos")){
+							temp.setText(""+(a*b-Integer.parseInt(backup[5])));
+							backup[4] = temp.getText();
+						}
+						
+						father.updateRow(index, backup);
+						JL_edit.setIcon(new ImageIcon("img/pencil.png"));
+						JL_delete.setIcon(new ImageIcon("img/trash.png"));
+					}
 				}
 
 				@Override
@@ -225,12 +224,80 @@ public class TableRow extends JPanel {
 						setBackground(new Color(255, 255, 255));
 				}
 			});
-			panel_EAST.add(JL_view);
-			panel_EAST.add(JL_download);
+
+			if (flag) {
+				JLabel JL_download = new JLabel(new ImageIcon("img/download.png"));
+				JL_download.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+						if (!edit)
+							setBackground(new Color(230, 230, 230));
+					}
+
+					@Override
+					public void mouseExited(MouseEvent e) {
+						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+						if (!edit)
+							setBackground(new Color(255, 255, 255));
+					}
+				});
+				JLabel JL_view = new JLabel(new ImageIcon("img/views.png"));
+				JL_view.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+						if (!edit)
+							setBackground(new Color(230, 230, 230));
+					}
+
+					@Override
+					public void mouseExited(MouseEvent e) {
+						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+						if (!edit)
+							setBackground(new Color(255, 255, 255));
+					}
+				});
+				panel_EAST.add(JL_view);
+				panel_EAST.add(JL_download);
+			}
+
+			panel_EAST.add(JL_edit);
+			panel_EAST.add(JL_delete);
+		} else {
+			JLabel JL_target;
+			JL_target = new JLabel(new ImageIcon("img/target.png"));
+			JL_target.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					Sincrorepuestos sr = (Sincrorepuestos) jFather;
+					sr.addRow(backup[0]);
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					if (!edit)
+						setBackground(new Color(230, 230, 230));
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					if (!edit)
+						setBackground(new Color(255, 255, 255));
+				}
+			});
+			panel_EAST.add(JL_target);
 		}
-
-		panel_EAST.add(JL_edit);
-		panel_EAST.add(JL_delete);
 	}
 
 	public void addCamp(String name) {
@@ -272,15 +339,15 @@ public class TableRow extends JPanel {
 	public void setSelected(boolean status) {
 		check.setSelected(status);
 	}
-	
-	public void doEnable(){
+
+	public void doEnable() {
 		String message = "¿Esta seguro que desea habilitar este elemento?";
 		String title = "Habilitando: " + backup[1];
 		// display the JOptionPane showConfirmDialog
 		int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
 		if (reply == JOptionPane.YES_OPTION) {
 			father.enableRow(index, backup[0]);
-		}	
+		}
 	}
 
 	public void doDelete() {
@@ -291,6 +358,14 @@ public class TableRow extends JPanel {
 		if (reply == JOptionPane.YES_OPTION) {
 			father.deleteRow(index, backup[0]);
 		}
+	}
+	
+	public String[] getDescription(){
+		return new String[]{backup[0], backup[2], backup[4]};
+	}
+	
+	public int getValue(){
+		return Integer.parseInt(backup[4]);
 	}
 
 	public boolean isSelected() {

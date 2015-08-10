@@ -134,7 +134,7 @@ public class Inventory extends JPanel {
 		int limitedRows = 0;
 		String[] title = { "Descripción", "Precio de compra", "Precio de venta", "Cantidad" };
 		ArrayList<String[]> data = MySQLConnection.getInventory(all);
-		JPanel table = new Table("inventory", data, title, navigation, search, advanceIcons, limitedRows);
+		JPanel table = new Table(this, "inventory", data, title, navigation, search, advanceIcons, limitedRows);
 		JP_CENTER.removeAll();
 		JP_CENTER.add(table, BorderLayout.CENTER);
 		JP_CENTER.revalidate();
@@ -149,7 +149,7 @@ public class Inventory extends JPanel {
 		int limitedRows = 0;
 		String[] title = { "Descripción", "Estado", "Precio de compra", "Precio de venta", "Cantidad" };
 		ArrayList<String[]> data = MySQLConnection.getInventory(all);
-		JPanel table = new Table("inventory_all", data, title, navigation, search, advanceIcons, limitedRows);
+		JPanel table = new Table(this, "inventory_all", data, title, navigation, search, advanceIcons, limitedRows);
 		JP_CENTER.removeAll();
 		JP_CENTER.add(table, BorderLayout.CENTER);
 		JP_CENTER.revalidate();

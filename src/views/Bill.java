@@ -188,7 +188,7 @@ public class Bill extends JPanel {
 		boolean advanceIcons = true;
 		boolean navigation = true;
 		int limitedRows = 0;
-		return new Table("Bill_2", data, title, navigation, search, advanceIcons, limitedRows);
+		return new Table(this, "Bill_2", data, title, navigation, search, advanceIcons, limitedRows);
 	}
 	
 	public Table sincroautos(){
@@ -255,6 +255,6 @@ public class Bill extends JPanel {
 		boolean advanceIcons = true;
 		boolean navigation = true;
 		int limitedRows = 0;
-		return new Table("Bill_1", data, title, navigation, search, advanceIcons, limitedRows);
+		return new Table(this, "Bill_1", data, title, navigation, search, advanceIcons, limitedRows);
 	}
 }
