@@ -8,7 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import gui.MenuButton;
 import views.Bill;
+import views.Home;
 import views.Inventory;
+import views.Sincroautos;
 import views.Sincrorepuestos;
 
 import java.awt.Color;
@@ -53,6 +55,8 @@ public class Main extends JFrame {
 		menu_panel.setLayout(new GridLayout(1, 0, 0, 0));
 
 		setContentPane(contentPane);
+		
+		loadJPanel("Inicio");
 	}
 
 	public void loadJPanel(String name) {
@@ -75,6 +79,20 @@ public class Main extends JFrame {
 		if (name.equals("Sincrorepuestos")) {
 			menu_panel.removeAll();
 			menu_panel.add(new Sincrorepuestos());
+			menu_panel.repaint();
+			return;
+		}
+		
+		if (name.equals("Sincroautos")) {
+			menu_panel.removeAll();
+			menu_panel.add(new Sincroautos());
+			menu_panel.repaint();
+			return;
+		}
+		
+		if (name.equals("Inicio")) {
+			menu_panel.removeAll();
+			menu_panel.add(new Home());
 			menu_panel.repaint();
 			return;
 		}

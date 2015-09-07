@@ -1,36 +1,37 @@
 package views;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import db.MySQLConnection;
-import gui.Table;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.UUID;
-
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Calendar;
+import java.util.UUID;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import db.MySQLConnection;
+import gui.Table;
+import javax.swing.SwingConstants;
+import javax.swing.JEditorPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-public class Sincrorepuestos extends JPanel {
-
+public class Sincroautos extends JPanel {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2944687387171442917L;
-
+	private static final long serialVersionUID = 5503097647174550320L;
+	private JLabel JLB_employee;
 	private int totalPrice = 0;
 	private Table smallTable, bigTable;
-	ArrayList<String[]> data, dataNames;
 	private JPanel JP_NORT_EAST;
 	private JPanel JP_NORT_EAST_NORTH;
 	private JLabel lblNewLabel;
@@ -41,41 +42,33 @@ public class Sincrorepuestos extends JPanel {
 	private JTextField JTF_client;
 	private JTextField JTF_cc;
 	private JTextField JTF_phone;
-	private JPanel JP_NORTH_CENTER;
-	private JLabel lblNewLabel_2;
-	private JLabel lblNewLabel_3;
-	private JTextField JTF_mount;
-	private JTextField JTF_discount;
 	private JPanel JP_SOUTH;
 	private JLabel JL_total;
 	private JButton JB_bill;
+	private JTextField JTF_plate;
+	private JLabel lblNewLabel_8;
+	private JPanel JP_WEST;
+	private JPanel panel;
+	private JPanel panel_1;
+	private JLabel lblTrabajo;
+	private JLabel lblNewLabel_9;
+	private String employee_id; 
+	
+	public Sincroautos() {
 
-	/**
-	 * Create the panel.
-	 */
-	public Sincrorepuestos() {
 		setLayout(new BorderLayout(0, 0));
 
-		String[] title = { "Descripcion", "Cantidad", "Precio unitario", "Neto", "Descuento", "Total"};
-		data = new ArrayList<String[]>();
-		dataNames = new ArrayList<String[]>();
+		String[] title = { "Trabajo", "Precio"};
 		boolean search = false;
 		boolean advanceIcons = false;
 		boolean navigation = false;
 		int limitedRows = 15;
 
-		boolean all = false;
-		data = MySQLConnection.getInventory(all);
-
-		for (String[] sm : data) {
-			dataNames.add(new String[] { sm[0], sm[1], sm[3], sm[4] });
-		}
-
-		bigTable = new Table(this, "sincrorepuestos", null, title, navigation, search, advanceIcons, limitedRows);
+		bigTable = new Table(this, "sincroautos", null, title, navigation, search, advanceIcons, limitedRows);
 		add(bigTable, BorderLayout.CENTER);
 
-		smallTable = new Table(this, "sincrorepuestos_search", dataNames, null, true, true, advanceIcons, 0);
-
+		smallTable = new Table(this, "sincroautos_employee", MySQLConnection.getEmployees(), null, true, false, advanceIcons, 0);
+		
 		JPanel JP_NORT = new JPanel();
 		add(JP_NORT, BorderLayout.NORTH);
 		JP_NORT.setLayout(new BorderLayout(0, 0));
@@ -84,6 +77,11 @@ public class Sincrorepuestos extends JPanel {
 		smallTable.setPreferredSize(new Dimension(400, 138));
 		smallTable.setBorder(BorderFactory.createLineBorder(new Color(196, 196, 196)));
 		JP_NORT.add(smallTable, BorderLayout.WEST);
+		
+		lblNewLabel_8 = new JLabel("Empleado");
+		lblNewLabel_8.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
+		lblNewLabel_8.setHorizontalAlignment(SwingConstants.LEFT);
+		smallTable.add(lblNewLabel_8, BorderLayout.NORTH);
 
 		JP_NORT_EAST = new JPanel();
 		JP_NORT.add(JP_NORT_EAST, BorderLayout.EAST);
@@ -116,7 +114,7 @@ public class Sincrorepuestos extends JPanel {
 		JP_NORT_EAST_NORTH.add(lblNewLabel_1);
 
 		JTF_num = new JTextField();
-		JTF_num.setText(""+MySQLConnection.getLastBillId(2));
+		JTF_num.setText(""+MySQLConnection.getLastBillId(1));
 		JTF_num.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
@@ -144,19 +142,23 @@ public class Sincrorepuestos extends JPanel {
 		JP_NORT_EAST_CENTER.setLayout(null);
 
 		JLabel lblNewLabel_5 = new JLabel("Cliente");
-		lblNewLabel_5.setBounds(10, 23, 46, 14);
+		lblNewLabel_5.setBounds(10, 39, 46, 14);
 		JP_NORT_EAST_CENTER.add(lblNewLabel_5);
 
 		JLabel lblNewLabel_6 = new JLabel("Cedula");
-		lblNewLabel_6.setBounds(10, 48, 46, 14);
+		lblNewLabel_6.setBounds(10, 64, 46, 14);
 		JP_NORT_EAST_CENTER.add(lblNewLabel_6);
 
 		JLabel lblNewLabel_7 = new JLabel("Telefono");
-		lblNewLabel_7.setBounds(10, 73, 53, 14);
+		lblNewLabel_7.setBounds(10, 89, 53, 14);
 		JP_NORT_EAST_CENTER.add(lblNewLabel_7);
+		
+		JLabel lblNewLabel_4 = new JLabel("Placa");
+		lblNewLabel_4.setBounds(10, 14, 46, 14);
+		JP_NORT_EAST_CENTER.add(lblNewLabel_4);
 
 		JTF_client = new JTextField();
-		JTF_client.setBounds(73, 20, 200, 20);
+		JTF_client.setBounds(73, 36, 200, 20);
 		JP_NORT_EAST_CENTER.add(JTF_client);
 		JTF_client.setColumns(30);
 
@@ -171,7 +173,7 @@ public class Sincrorepuestos extends JPanel {
 				}
 			}
 		});
-		JTF_cc.setBounds(73, 45, 86, 20);
+		JTF_cc.setBounds(73, 61, 86, 20);
 		JP_NORT_EAST_CENTER.add(JTF_cc);
 		JTF_cc.setColumns(10);
 
@@ -186,51 +188,14 @@ public class Sincrorepuestos extends JPanel {
 				}
 			}
 		});
-		JTF_phone.setBounds(73, 70, 86, 20);
+		JTF_phone.setBounds(73, 86, 86, 20);
 		JP_NORT_EAST_CENTER.add(JTF_phone);
 		JTF_phone.setColumns(10);
-
-		JP_NORTH_CENTER = new JPanel();
-		JP_NORT.add(JP_NORTH_CENTER, BorderLayout.CENTER);
-		JP_NORTH_CENTER.setLayout(null);
-
-		lblNewLabel_2 = new JLabel(" Cantidad");
-		lblNewLabel_2.setBounds(0, 94, 70, 14);
-		JP_NORTH_CENTER.add(lblNewLabel_2);
-
-		lblNewLabel_3 = new JLabel(" Descuento");
-		lblNewLabel_3.setBounds(0, 119, 70, 14);
-		JP_NORTH_CENTER.add(lblNewLabel_3);
-
-		JTF_mount = new JTextField();
-		JTF_mount.setText("1");
-		JTF_mount.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
-					getToolkit().beep();
-					e.consume();
-				}
-			}
-		});
-		JTF_mount.setBounds(80, 94, 86, 20);
-		JP_NORTH_CENTER.add(JTF_mount);
-		JTF_mount.setColumns(10);
-
-		JTF_discount = new JTextField();
-		JTF_discount.setText("0");
-		JTF_discount.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
-					getToolkit().beep();
-					e.consume();
-				}
-			}
-		});
-		JTF_discount.setBounds(80, 119, 86, 20);
-		JP_NORTH_CENTER.add(JTF_discount);
-		JTF_discount.setColumns(10);
+		
+		JTF_plate = new JTextField();
+		JTF_plate.setBounds(73, 11, 86, 20);
+		JP_NORT_EAST_CENTER.add(JTF_plate);
+		JTF_plate.setColumns(10);
 		
 		JP_SOUTH = new JPanel();
 		add(JP_SOUTH, BorderLayout.SOUTH);
@@ -246,31 +211,76 @@ public class Sincrorepuestos extends JPanel {
 			}
 		});
 		JP_SOUTH.add(JB_bill);
+		
+		JP_WEST = new JPanel();
+		JP_WEST.setMinimumSize(new Dimension(300, 100));
+		JP_WEST.setPreferredSize(new Dimension(300, 100));
+		add(JP_WEST, BorderLayout.WEST);
+		JP_WEST.setLayout(new BorderLayout(0, 0));
+		
+		panel = new JPanel();
+		panel.setMinimumSize(new Dimension(300, 6));
+		panel.setPreferredSize(new Dimension(300, 6));
+		JP_WEST.add(panel, BorderLayout.NORTH);
+		
+		panel_1 = new JPanel();
+		panel_1.setBorder(new MatteBorder(0, 0, 0, 1, new Color(196,196,196)));
+		JP_WEST.add(panel_1, BorderLayout.CENTER);
+		panel_1.setLayout(null);
+		
+		lblTrabajo = new JLabel("Trabajo");
+		lblTrabajo.setBounds(10, 44, 46, 14);
+		panel_1.add(lblTrabajo);
+		
+		JEditorPane EP_trabajo = new JEditorPane();
+		EP_trabajo.setBorder(new MatteBorder(1, 1, 1, 1, new Color(196,196,196)));
+		EP_trabajo.setBounds(10, 62, 280, 40);
+		panel_1.add(EP_trabajo);
+		
+		JEditorPane EP_valor = new JEditorPane();
+		EP_valor.setBorder(new MatteBorder(1, 1, 1, 1, new Color(196,196,196)));
+		EP_valor.setBounds(55, 109, 106, 20);
+		panel_1.add(EP_valor);
+		
+		lblNewLabel_9 = new JLabel("Precio:");
+		lblNewLabel_9.setBounds(10, 112, 46, 14);
+		panel_1.add(lblNewLabel_9);
+		
+		JButton btnNewButton = new JButton("Agregar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				bigTable.addRow(
+						new String[] {"", EP_trabajo.getText(), EP_valor.getText()}, ""+ UUID.randomUUID());
+				EP_trabajo.setText("");
+				EP_valor.setText("");
+				calculate();
+			}
+		});
+		btnNewButton.setBounds(171, 109, 80, 20);
+		panel_1.add(btnNewButton);
+		
+		JLabel lblEmpleado = new JLabel("Empleado:");
+		lblEmpleado.setBounds(10, 11, 69, 14);
+		panel_1.add(lblEmpleado);
+		
+		JLB_employee = new JLabel("");
+		JLB_employee.setBounds(74, 11, 216, 14);
+		panel_1.add(JLB_employee);
+		
 
 	}
 	
-	public void doBill(){		
-		MySQLConnection.insertTransaction(JTF_num.getText(), "2", JTF_cc.getText(), "", ""+totalPrice, JTF_date.getText(), JTF_client.getText(), JTF_phone.getText(), bigTable.getItems());
+	public void selectEmployee(String id, String name){
+		employee_id = id;
+		JLB_employee.setText(name);
+	}
+	
+	public void doBill(){	
+		MySQLConnection.insertTransaction(JTF_num.getText(), "1", JTF_cc.getText(), JTF_plate.getText(), ""+totalPrice, JTF_date.getText(), JTF_client.getText(), JTF_phone.getText(), employee_id,  bigTable.getItems());
 	}
 	
 	public void calculate(){
 		totalPrice = bigTable.getValue();
 		JL_total.setText("Total: " + totalPrice);
-	}
-
-	public void addRow(String id) {
-		for (String[] s : data) {
-			if (s[0].equals(id)) {
-				int desc = Integer.parseInt(JTF_discount.getText()) * Integer.parseInt(JTF_mount.getText());
-				int neto = Integer.parseInt(s[3]) * Integer.parseInt(JTF_mount.getText());
-				int total = neto - desc;
-				bigTable.addRow(
-						new String[] { s[0], s[1], JTF_mount.getText(), s[3], "" + neto, "" + desc, "" + total}, ""+ UUID.randomUUID());
-				break;
-			}
-		}
-		calculate();
-		JTF_mount.setText("1");
-		JTF_discount.setText("0");;
 	}
 }

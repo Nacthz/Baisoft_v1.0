@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import db.MySQLConnection;
+import views.Sincroautos;
 import views.Sincrorepuestos;
 
 import java.awt.BorderLayout;
@@ -79,6 +80,27 @@ public class Table extends JPanel {
 			panel_CENTER.add(tr);
 			rv();
 			Acant--;
+		}
+	}
+	
+	public void addRow(String[] d, String rid) {
+		if (Acant > 0) {
+			if (father.equals("sincrorepuestos")) {
+				String g[] = new String[] {d[0], d[1], d[2], d[3], d[4], d[5], d[6], rid};
+				TableRow tr = new TableRow(jFather, d, actual, actualTable, icons, rid);
+				actualData.add(g);
+				panel_CENTER.add(tr);
+				rv();
+				Acant--;
+			}
+			if (father.equals("sincroautos")) {
+				String g[] = new String[] {d[0], d[1], d[2], rid};
+				TableRow tr = new TableRow(jFather, d, actual, actualTable, icons, rid);
+				actualData.add(g);
+				panel_CENTER.add(tr);
+				rv();
+				Acant--;
+			}
 		}
 	}
 
@@ -296,8 +318,8 @@ public class Table extends JPanel {
 		String sql;
 		if (father.equals("inventory")) {
 			sql = "UPDATE `inventory_item` SET `inventory_item_description` = '" + updateData[1]
-					+ "', `inventory_item_quantity` = '" + updateData[2] + "', `inventory_item_sale_price` = '"
-					+ updateData[3] + "', `inventory_item_price` = '" + updateData[4]
+					+ "', `inventory_item_quantity` = '" + updateData[4] + "', `inventory_item_sale_price` = '"
+					+ updateData[3] + "', `inventory_item_price` = '" + updateData[2]
 					+ "' WHERE `inventory_item_id` = '" + updateData[0] + "';";
 			MySQLConnection.deleteItem(sql);
 
@@ -312,8 +334,8 @@ public class Table extends JPanel {
 
 		if (father.equals("inventory_all")) {
 			sql = "UPDATE `inventory_item` SET `inventory_item_description` = '" + updateData[1]
-					+ "', `inventory_item_quantity` = '" + updateData[3] + "', `inventory_item_sale_price` = '"
-					+ updateData[4] + "', `inventory_item_price` = '" + updateData[5]
+					+ "', `inventory_item_quantity` = '" + updateData[5] + "', `inventory_item_sale_price` = '"
+					+ updateData[4] + "', `inventory_item_price` = '" + updateData[3]
 					+ "' WHERE `inventory_item_id` = '" + updateData[0] + "';";
 			MySQLConnection.deleteItem(sql);
 
@@ -333,6 +355,40 @@ public class Table extends JPanel {
 		}
 	}
 
+	public void deleteRow(TableRow trd, String uid) {
+		if (father.equals("sincrorepuestos")) {
+			int i = 0;
+			for (String[] sm : actualData) {
+				if (sm[7].equals(uid)) {
+					actualData.remove(i);
+					break;
+				}
+				i++;
+			}
+			Acant++;
+			panel_CENTER.remove(trd);
+			rv();
+			Sincrorepuestos sr = (Sincrorepuestos) jFather;
+			sr.calculate();
+		}
+		
+		if (father.equals("sincroautos")) {
+			int i = 0;
+			for (String[] sm : actualData) {
+				if (sm[3].equals(uid)) {
+					actualData.remove(i);
+					break;
+				}
+				i++;
+			}
+			Acant++;
+			panel_CENTER.remove(trd);
+			rv();
+			Sincroautos sa = (Sincroautos) jFather;
+			sa.calculate();
+		}
+	}
+	
 	public void deleteRow(int toWork, String itemID) {
 		String sql;
 		if (father.equals("inventory")) {
@@ -351,21 +407,6 @@ public class Table extends JPanel {
 			actualData.get(toWork)[2] = "eliminado";
 			reload();
 			return;
-		}
-
-		if (father.equals("sincrorepuestos")) {
-			int i = 0;
-			for (String[] sm : actualData) {
-				if (sm[0].equals(itemID)) {
-					actualData.remove(i);
-					break;
-				}
-				i++;
-			}
-			Acant++;
-			fillData(-1, actualData);
-			Sincrorepuestos sr = (Sincrorepuestos) jFather;
-			sr.calculate();
 		}
 	}
 
