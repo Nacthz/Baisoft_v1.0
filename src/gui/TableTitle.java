@@ -30,24 +30,27 @@ public class TableTitle extends JPanel {
 
 		JPanel panel_WEST = new JPanel();
 		panel_WEST.setBorder(new EmptyBorder(0, 10, 0, 0));
-		panel_WEST.setPreferredSize(new Dimension(66, height));
 		panel_WEST.setOpaque(false);
 		add(panel_WEST, BorderLayout.WEST);
 		panel_WEST.setLayout(new BorderLayout(0, 0));
 
-		JCheckBox check = new JCheckBox();
-		check.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (check.isSelected()) {
-					father.setSelected(true);
-				} else {
-					father.setSelected(false);
+		if (!father.father.equals("home")) {
+			JCheckBox check = new JCheckBox();
+			check.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					if (check.isSelected()) {
+						father.setSelected(true);
+					} else {
+						father.setSelected(false);
+					}
 				}
-			}
-		});
-		check.setOpaque(false);
-		panel_WEST.add(check, BorderLayout.WEST);
+			});
+			check.setOpaque(false);
+			panel_WEST.add(check, BorderLayout.WEST);		
+		}
+		
+
 
 		JLabel id = new JLabel("ID");
 		id.setHorizontalAlignment(SwingConstants.CENTER);
@@ -61,10 +64,16 @@ public class TableTitle extends JPanel {
 
 		panel_CENTER_CENTE = new JPanel();
 
-		if (icons)
-			panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 100));
-		else
-			panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 50));
+		
+		if (!father.father.equals("home")) {
+			if (icons)
+				panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 100));
+			else
+				panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 50));
+		}
+		else {
+			panel_CENTER_CENTE.setBorder(new EmptyBorder(0, 0, 0, 30));
+		}
 
 		panel_CENTER_CENTE.setOpaque(false);
 		panel_CENTER.add(panel_CENTER_CENTE, BorderLayout.CENTER);

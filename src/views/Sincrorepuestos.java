@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import java.awt.event.KeyAdapter;
@@ -20,6 +21,8 @@ import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Font;
+import javax.swing.JRadioButton;
 
 public class Sincrorepuestos extends JPanel {
 
@@ -49,6 +52,7 @@ public class Sincrorepuestos extends JPanel {
 	private JPanel JP_SOUTH;
 	private JLabel JL_total;
 	private JButton JB_bill;
+	private JRadioButton RB_pagado;
 
 	/**
 	 * Create the panel.
@@ -116,7 +120,7 @@ public class Sincrorepuestos extends JPanel {
 		JP_NORT_EAST_NORTH.add(lblNewLabel_1);
 
 		JTF_num = new JTextField();
-		JTF_num.setText(""+MySQLConnection.getLastBillId(2));
+		JTF_num.setText(""+MySQLConnection.getLastBillI(2));
 		JTF_num.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
@@ -195,11 +199,11 @@ public class Sincrorepuestos extends JPanel {
 		JP_NORTH_CENTER.setLayout(null);
 
 		lblNewLabel_2 = new JLabel(" Cantidad");
-		lblNewLabel_2.setBounds(0, 94, 70, 14);
+		lblNewLabel_2.setBounds(0, 93, 70, 14);
 		JP_NORTH_CENTER.add(lblNewLabel_2);
 
 		lblNewLabel_3 = new JLabel(" Descuento");
-		lblNewLabel_3.setBounds(0, 119, 70, 14);
+		lblNewLabel_3.setBounds(0, 118, 70, 14);
 		JP_NORTH_CENTER.add(lblNewLabel_3);
 
 		JTF_mount = new JTextField();
@@ -213,7 +217,7 @@ public class Sincrorepuestos extends JPanel {
 				}
 			}
 		});
-		JTF_mount.setBounds(80, 94, 86, 20);
+		JTF_mount.setBounds(80, 93, 86, 20);
 		JP_NORTH_CENTER.add(JTF_mount);
 		JTF_mount.setColumns(10);
 
@@ -228,7 +232,7 @@ public class Sincrorepuestos extends JPanel {
 				}
 			}
 		});
-		JTF_discount.setBounds(80, 119, 86, 20);
+		JTF_discount.setBounds(80, 118, 86, 20);
 		JP_NORTH_CENTER.add(JTF_discount);
 		JTF_discount.setColumns(10);
 		
@@ -236,6 +240,7 @@ public class Sincrorepuestos extends JPanel {
 		add(JP_SOUTH, BorderLayout.SOUTH);
 		
 		JL_total = new JLabel("Total: 0");
+		JL_total.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		JP_SOUTH.add(JL_total);
 		
 		JB_bill = new JButton("Facturar");
@@ -246,11 +251,34 @@ public class Sincrorepuestos extends JPanel {
 			}
 		});
 		JP_SOUTH.add(JB_bill);
+		
+		RB_pagado = new JRadioButton("Pagado");
+		JP_SOUTH.add(RB_pagado);
+		RB_pagado.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
 	}
 	
-	public void doBill(){		
-		MySQLConnection.insertTransaction(JTF_num.getText(), "2", JTF_cc.getText(), "", ""+totalPrice, JTF_date.getText(), JTF_client.getText(), JTF_phone.getText(), bigTable.getItems());
+	public void doBill(){
+		String status = "Debiendo";
+		if(RB_pagado.isSelected()){
+			status = "Pagado";
+		}
+		boolean result = MySQLConnection.insertTransaction(JTF_num.getText(), "2", JTF_cc.getText(), "", ""+totalPrice, JTF_date.getText(), JTF_client.getText(), JTF_phone.getText(), bigTable.getItems(), status);
+		
+		if(result){
+			String message = "¿Desea imprimir la factura?";
+			String title = "Factura hecha correctamente";
+			// display the JOptionPane showConfirmDialog
+			int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+			if (reply == JOptionPane.YES_OPTION) {
+				JTF_cc.setText("0");
+				JTF_client.setText("");
+				JTF_phone.setText("0");
+				int nnum = Integer.parseInt(JTF_num.getText().trim()) + 1;
+				JTF_num.setText("" + nnum);
+				bigTable.removeItems();
+			}
+		}
 	}
 	
 	public void calculate(){

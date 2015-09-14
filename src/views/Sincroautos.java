@@ -8,30 +8,36 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.UUID;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import db.MySQLConnection;
 import gui.Table;
-import javax.swing.SwingConstants;
 import javax.swing.JEditorPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import java.awt.Font;
+import javax.swing.SwingConstants;
+import javax.swing.JRadioButton;
 
 public class Sincroautos extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5503097647174550320L;
-	private JLabel JLB_employee;
+	private JComboBox<Item> JCB_employee , JCB_tipo;
+	JEditorPane EP_trabajo, EP_valor;
 	private int totalPrice = 0;
-	private Table smallTable, bigTable;
+	private Table bigTable;
 	private JPanel JP_NORT_EAST;
 	private JPanel JP_NORT_EAST_NORTH;
 	private JLabel lblNewLabel;
@@ -46,42 +52,98 @@ public class Sincroautos extends JPanel {
 	private JLabel JL_total;
 	private JButton JB_bill;
 	private JTextField JTF_plate;
-	private JLabel lblNewLabel_8;
-	private JPanel JP_WEST;
-	private JPanel panel;
-	private JPanel panel_1;
+	private JPanel JP_NORT_WEST;
+	private JPanel PanelTrabajos;
 	private JLabel lblTrabajo;
 	private JLabel lblNewLabel_9;
-	private String employee_id; 
+	private JPanel JP_NORT_CENTER;
+	JRadioButton RB_pagado;
 	
-	public Sincroautos() {
-
-		setLayout(new BorderLayout(0, 0));
-
-		String[] title = { "Trabajo", "Precio"};
+	
+	public void createTable(){
+		String[] title = { "Descripción", "Empleado", "Tipo", "Precio"};
 		boolean search = false;
 		boolean advanceIcons = false;
 		boolean navigation = false;
 		int limitedRows = 15;
 
 		bigTable = new Table(this, "sincroautos", null, title, navigation, search, advanceIcons, limitedRows);
-		add(bigTable, BorderLayout.CENTER);
+	}
+	
+	public Sincroautos() {
 
-		smallTable = new Table(this, "sincroautos_employee", MySQLConnection.getEmployees(), null, true, false, advanceIcons, 0);
+		setLayout(new BorderLayout(0, 0));
+
+		createTable();
+		add(bigTable, BorderLayout.CENTER);
 		
 		JPanel JP_NORT = new JPanel();
 		add(JP_NORT, BorderLayout.NORTH);
 		JP_NORT.setLayout(new BorderLayout(0, 0));
 		JP_NORT.setBorder(new EmptyBorder(6, 6, 0, 6));
-
-		smallTable.setPreferredSize(new Dimension(400, 138));
-		smallTable.setBorder(BorderFactory.createLineBorder(new Color(196, 196, 196)));
-		JP_NORT.add(smallTable, BorderLayout.WEST);
 		
-		lblNewLabel_8 = new JLabel("Empleado");
-		lblNewLabel_8.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
-		lblNewLabel_8.setHorizontalAlignment(SwingConstants.LEFT);
-		smallTable.add(lblNewLabel_8, BorderLayout.NORTH);
+		JP_NORT_WEST = new JPanel();
+		JP_NORT.add(JP_NORT_WEST, BorderLayout.WEST);
+		JP_NORT_WEST.setMinimumSize(new Dimension(300, 135));
+		JP_NORT_WEST.setPreferredSize(new Dimension(300, 135));
+		JP_NORT_WEST.setLayout(new BorderLayout(0, 0));
+		
+		PanelTrabajos = new JPanel();
+		JP_NORT_WEST.add(PanelTrabajos, BorderLayout.CENTER);
+		PanelTrabajos.setLayout(null);
+		
+		lblTrabajo = new JLabel("Descripci\u00F3n:");
+		lblTrabajo.setBounds(10, 68, 93, 14);
+		PanelTrabajos.add(lblTrabajo);
+		
+		EP_trabajo = new JEditorPane();
+		EP_trabajo.setBorder(new MatteBorder(1, 1, 1, 1, new Color(196,196,196)));
+		EP_trabajo.setBounds(95, 68, 201, 40);
+		PanelTrabajos.add(EP_trabajo);
+		
+		EP_valor = new JEditorPane();
+		EP_valor.setBorder(new MatteBorder(1, 1, 1, 1, new Color(196,196,196)));
+		EP_valor.setBounds(95, 114, 106, 20);
+		PanelTrabajos.add(EP_valor);
+		
+		lblNewLabel_9 = new JLabel("Precio:");
+		lblNewLabel_9.setBounds(10, 114, 46, 14);
+		PanelTrabajos.add(lblNewLabel_9);
+		
+		JButton btnNewButton = new JButton("Agregar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Item Emplo = (Item) JCB_employee.getSelectedItem();
+				Item Type = (Item) JCB_tipo.getSelectedItem();
+				bigTable.addRow(
+						new String[] {Emplo.getId(), EP_trabajo.getText(), Emplo.toString(), Type.toString(),  EP_valor.getText()}, ""+ UUID.randomUUID());
+				EP_trabajo.setText("");
+				EP_valor.setText("");
+				calculate();	
+			}
+		});
+		btnNewButton.setBounds(216, 114, 80, 20);
+		PanelTrabajos.add(btnNewButton);
+		
+		JLabel lblEmpleado = new JLabel("Empleado:");
+		lblEmpleado.setBounds(10, 45, 93, 14);
+		PanelTrabajos.add(lblEmpleado);
+		
+		JCB_employee = new JComboBox<Item>();			
+		JCB_employee.setBounds(95, 42, 201, 20);
+		PanelTrabajos.add(JCB_employee);
+		
+		JLabel lblTipo = new JLabel("Tipo:");
+		lblTipo.setBounds(10, 20, 93, 14);
+		PanelTrabajos.add(lblTipo);
+		
+		 JCB_tipo = new JComboBox<Item>();
+		Item type1 = new Item("0", "Trabajo");
+		Item type2 = new Item("1", "Scaneado");		
+		JCB_tipo.addItem(type1);
+		JCB_tipo.addItem(type2);	
+		JCB_tipo.setBounds(95, 17, 201, 20);
+		PanelTrabajos.add(JCB_tipo);
 
 		JP_NORT_EAST = new JPanel();
 		JP_NORT.add(JP_NORT_EAST, BorderLayout.EAST);
@@ -114,7 +176,7 @@ public class Sincroautos extends JPanel {
 		JP_NORT_EAST_NORTH.add(lblNewLabel_1);
 
 		JTF_num = new JTextField();
-		JTF_num.setText(""+MySQLConnection.getLastBillId(1));
+		JTF_num.setText(""+MySQLConnection.getLastBillI(1));
 		JTF_num.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
@@ -197,11 +259,13 @@ public class Sincroautos extends JPanel {
 		JP_NORT_EAST_CENTER.add(JTF_plate);
 		JTF_plate.setColumns(10);
 		
+		JP_NORT_CENTER = new JPanel();
+		JP_NORT.add(JP_NORT_CENTER, BorderLayout.CENTER);
+		JP_NORT_CENTER.setLayout(null);
+		
 		JP_SOUTH = new JPanel();
 		add(JP_SOUTH, BorderLayout.SOUTH);
-		
-		JL_total = new JLabel("Total: 0");
-		JP_SOUTH.add(JL_total);
+		JP_SOUTH.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JB_bill = new JButton("Facturar");
 		JB_bill.addMouseListener(new MouseAdapter() {
@@ -210,77 +274,74 @@ public class Sincroautos extends JPanel {
 				doBill();
 			}
 		});
+		
+		JL_total = new JLabel("Total: 0");
+		JP_SOUTH.add(JL_total);
+		JL_total.setHorizontalAlignment(SwingConstants.CENTER);
+		JL_total.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		JP_SOUTH.add(JB_bill);
 		
-		JP_WEST = new JPanel();
-		JP_WEST.setMinimumSize(new Dimension(300, 100));
-		JP_WEST.setPreferredSize(new Dimension(300, 100));
-		add(JP_WEST, BorderLayout.WEST);
-		JP_WEST.setLayout(new BorderLayout(0, 0));
+		RB_pagado = new JRadioButton("Pagado");
+		RB_pagado.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		JP_SOUTH.add(RB_pagado);
 		
-		panel = new JPanel();
-		panel.setMinimumSize(new Dimension(300, 6));
-		panel.setPreferredSize(new Dimension(300, 6));
-		JP_WEST.add(panel, BorderLayout.NORTH);
+		ArrayList<String[]> temporal = MySQLConnection.getEmployees();
 		
-		panel_1 = new JPanel();
-		panel_1.setBorder(new MatteBorder(0, 0, 0, 1, new Color(196,196,196)));
-		JP_WEST.add(panel_1, BorderLayout.CENTER);
-		panel_1.setLayout(null);
-		
-		lblTrabajo = new JLabel("Trabajo");
-		lblTrabajo.setBounds(10, 44, 46, 14);
-		panel_1.add(lblTrabajo);
-		
-		JEditorPane EP_trabajo = new JEditorPane();
-		EP_trabajo.setBorder(new MatteBorder(1, 1, 1, 1, new Color(196,196,196)));
-		EP_trabajo.setBounds(10, 62, 280, 40);
-		panel_1.add(EP_trabajo);
-		
-		JEditorPane EP_valor = new JEditorPane();
-		EP_valor.setBorder(new MatteBorder(1, 1, 1, 1, new Color(196,196,196)));
-		EP_valor.setBounds(55, 109, 106, 20);
-		panel_1.add(EP_valor);
-		
-		lblNewLabel_9 = new JLabel("Precio:");
-		lblNewLabel_9.setBounds(10, 112, 46, 14);
-		panel_1.add(lblNewLabel_9);
-		
-		JButton btnNewButton = new JButton("Agregar");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				bigTable.addRow(
-						new String[] {"", EP_trabajo.getText(), EP_valor.getText()}, ""+ UUID.randomUUID());
-				EP_trabajo.setText("");
-				EP_valor.setText("");
-				calculate();
-			}
-		});
-		btnNewButton.setBounds(171, 109, 80, 20);
-		panel_1.add(btnNewButton);
-		
-		JLabel lblEmpleado = new JLabel("Empleado:");
-		lblEmpleado.setBounds(10, 11, 69, 14);
-		panel_1.add(lblEmpleado);
-		
-		JLB_employee = new JLabel("");
-		JLB_employee.setBounds(74, 11, 216, 14);
-		panel_1.add(JLB_employee);
-		
-
-	}
-	
-	public void selectEmployee(String id, String name){
-		employee_id = id;
-		JLB_employee.setText(name);
+		for (String[] ms : temporal){
+			Item abce = new Item(ms[0], ms[1]);
+			JCB_employee.addItem(abce);
+		}
 	}
 	
 	public void doBill(){	
-		MySQLConnection.insertTransaction(JTF_num.getText(), "1", JTF_cc.getText(), JTF_plate.getText(), ""+totalPrice, JTF_date.getText(), JTF_client.getText(), JTF_phone.getText(), employee_id,  bigTable.getItems());
+		
+		System.out.println("Bill");
+		
+		String status = "Debiendo";
+		if(RB_pagado.isSelected()){
+			status = "Pagado";
+		}
+		
+		boolean result = MySQLConnection.insertTransaction(JTF_num.getText(), "1", JTF_cc.getText(), JTF_plate.getText(), ""+totalPrice, JTF_date.getText(), JTF_client.getText(), JTF_phone.getText(),  bigTable.getItems(), status);
+
+		if(result){
+			String message = "¿Desea imprimir la factura?";
+			String title = "Factura hecha correctamente";
+			// display the JOptionPane showConfirmDialog
+			int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+			if (reply == JOptionPane.YES_OPTION) {
+				EP_trabajo.setText("");
+				EP_valor.setText("");
+				JTF_cc.setText("0");
+				JTF_client.setText("");
+				JTF_phone.setText("0");
+				JTF_plate.setText("");
+				int nnum = Integer.parseInt(JTF_num.getText().trim()) + 1;
+				JTF_num.setText("" + nnum);
+				bigTable.removeItems();
+			}
+		}
 	}
 	
 	public void calculate(){
 		totalPrice = bigTable.getValue();
 		JL_total.setText("Total: " + totalPrice);
 	}
+	
+	public class Item {
+	    private String id;
+	    private String description;
+
+	    public Item(String id, String description) {
+	        this.id = id;
+	        this.description = description;
+	    }
+	    public String getId() {
+	        return id;
+	    }
+
+	    public String toString() {
+	        return description;
+	    }
+	} 
 }

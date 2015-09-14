@@ -23,7 +23,6 @@ import java.awt.GridLayout;
 
 public class Bill extends JPanel {
 	private JPanel table;
-	private boolean all = false;
 	private static final long serialVersionUID = 1721860207718285215L;
 
 	public Bill() {
@@ -48,18 +47,18 @@ public class Bill extends JPanel {
 		JL_sincroautos.setBackground(Color.white);
 		JLabel JL_sincrorepuestos = new JLabel("Sincrorepuestos");
 		JL_sincrorepuestos.setBackground(Color.white);
+		JLabel JL_empleados = new JLabel("Empleados");
+		JL_empleados.setBackground(Color.white);
 
 		JL_sincroautos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (all) {
 					select(JL_sincroautos);
 					deselect(JL_sincrorepuestos);
-					all = false;
+					deselect(JL_empleados);
 					table.add(sincroautos());
 					table.revalidate();
 					table.repaint();
-				}
 			}
 
 			@Override
@@ -81,14 +80,12 @@ public class Bill extends JPanel {
 		JL_sincrorepuestos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (!all) {
 					select(JL_sincrorepuestos);
 					deselect(JL_sincroautos);
-					all = true;
+					deselect(JL_empleados);
 					table.add(sincrorepuestos());
 					table.revalidate();
 					table.repaint();					
-				}
 			}
 
 			@Override
@@ -106,6 +103,31 @@ public class Bill extends JPanel {
 		JL_sincrorepuestos.setPreferredSize(new Dimension(115, 28));
 		deselect(JL_sincrorepuestos);
 		JP_NORTH.add(JL_sincrorepuestos);
+		
+		JL_empleados.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+					select(JL_empleados);
+					deselect(JL_sincroautos);
+					deselect(JL_sincrorepuestos);
+					table.add(empleados());
+					table.revalidate();
+					table.repaint();					
+			}
+
+			public void mouseEntered(MouseEvent arg0) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			}
+
+			public void mouseExited(MouseEvent e) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		});
+		JL_empleados.setHorizontalAlignment(SwingConstants.CENTER);
+		JL_empleados.setOpaque(true);
+		JL_empleados.setPreferredSize(new Dimension(80, 28));
+		deselect(JL_empleados);
+		JP_NORTH.add(JL_empleados);
 	}
 
 	public void select(JComponent o) {
@@ -127,7 +149,7 @@ public class Bill extends JPanel {
 	
 	public Table sincrorepuestos(){
 		table.removeAll();
-		String[] title = {"Cliente", "Cedula", "Celular", "Factura", "Fecha", "Valor"};
+		String[] title = {"Cliente", "Cedula", "Celular", "Factura", "Fecha", "Estado", "Valor"};
 		ArrayList<String[]> data = MySQLConnection.getBillSincrorepuestos();
 
 		boolean search = true;
@@ -139,7 +161,7 @@ public class Bill extends JPanel {
 	
 	public Table sincroautos(){
 		table.removeAll();
-		String[] title = { "Empleado", "Cliente", "Placa", "Cedula", "Celular", "Factura", "Fecha", "Valor"};
+		String[] title = { "Cliente", "Placa", "Cedula", "Celular", "Factura", "Fecha", "Estado", "Valor"};
 		ArrayList<String[]> data = MySQLConnection.getBillSincroautos();
 
 
@@ -148,5 +170,18 @@ public class Bill extends JPanel {
 		boolean navigation = true;
 		int limitedRows = 0;
 		return new Table(this, "Bill_1", data, title, navigation, search, advanceIcons, limitedRows);
+	}
+	
+	
+	public Table empleados(){
+		table.removeAll();
+		String[] title = { "Empleado", "Descripción", "Factura", "Fecha", "Tipo", "Valor"};
+		ArrayList<String[]> data = MySQLConnection.getEmployeesBill();
+
+		boolean search = true;
+		boolean advanceIcons = false;
+		boolean navigation = true;
+		int limitedRows = 0;
+		return new Table(this, "Employee_bill", data, title, navigation, search, advanceIcons, limitedRows);
 	}
 }

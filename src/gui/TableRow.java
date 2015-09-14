@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
 import db.MySQLConnection;
 import frame.Info;
+import views.Home;
 import views.Sincroautos;
 import views.Sincrorepuestos;
 
@@ -56,7 +57,7 @@ public class TableRow extends JPanel {
 		add(panel_WEST, BorderLayout.WEST);
 		panel_WEST.setLayout(new BorderLayout(0, 0));
 
-		if (!father.father.equals("sincrorepuestos_search") &&  !father.father.equals("sincroautos_employee") ) {
+		if (!father.father.equals("sincrorepuestos_search") &&  !father.father.equals("sincroautos_employee")  &&  !father.father.equals("home")) {
 			check = new JCheckBox();
 			check.addMouseListener(mouseEvent());
 			check.setOpaque(false);
@@ -89,7 +90,7 @@ public class TableRow extends JPanel {
 		panel_EAST.setBorder(new EmptyBorder(0, 0, 0, 10));
 		panel_EAST.setOpaque(false);
 
-		if (!father.father.equals("sincrorepuestos_search") &&  !father.father.equals("sincroautos_employee") ) {
+		if (!father.father.equals("sincrorepuestos_search") &&  !father.father.equals("sincroautos_employee")   &&  !father.father.equals("home")) {
 			if (flag) {
 				panel_EAST.setPreferredSize(new Dimension(100, height));
 				panel_EAST.setLayout(new GridLayout(0, 4, 0, 0));
@@ -108,7 +109,7 @@ public class TableRow extends JPanel {
 			addCamp(data[i]);
 		}
 
-		if (!father.father.equals("sincrorepuestos_search") &&  !father.father.equals("sincroautos_employee") ) {
+		if (!father.father.equals("sincrorepuestos_search") &&  !father.father.equals("sincroautos_employee")  &&  !father.father.equals("home")) {
 			JLabel JL_delete;
 			if (data.length > 2) {
 				if (data[2].equals("eliminado"))
@@ -233,7 +234,29 @@ public class TableRow extends JPanel {
 				JL_download.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						System.out.println("Descargar");
+						String result = MySQLConnection.changeStatus(backup[0]);
+						
+						if (father.father.equals("Bill_1")) {
+							backup[7] = result;
+							int i = 1;
+							for (JTextComponent ob : info) {
+								if(i==7){
+									ob.setText(backup[i]);
+								}
+								i++;
+							}
+						}
+						
+						if (father.father.equals("Bill_2")) {
+							backup[6] = result;
+							int i = 1;
+							for (JTextComponent ob : info) {
+								if(i==6){
+									ob.setText(backup[i]);
+								}
+								i++;
+							}
+						}
 					}
 
 					@Override
@@ -262,7 +285,7 @@ public class TableRow extends JPanel {
 						}
 						
 						if (father.father.equals("Bill_1")) {
-							ArrayList<String[]> result = MySQLConnection.getBillInfo1(backup[6]);
+							ArrayList<String[]> result = MySQLConnection.getBillInfo1(backup[5]);
 							
 							final Info inf = new Info(backup[5], result, "Bill_1");
 							inf.setVisible(true);
@@ -321,16 +344,16 @@ public class TableRow extends JPanel {
 			JL_target = new JLabel(new ImageIcon("img/target.png"));
 			JL_target.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e) {
-					if(father.father.equals("sincroautos_employee")){
-						Sincroautos sa = (Sincroautos) jFather;
-						sa.selectEmployee(backup[0], backup[1] );							
-					}
-					
+				public void mouseClicked(MouseEvent e) {					
 					if(father.father.equals("sincrorepuestos_search")){
 						Sincrorepuestos sr = (Sincrorepuestos) jFather;
 						sr.addRow(backup[0]);					
-					}					
+					}
+					
+					if(father.father.equals("home")){
+						Home sr = (Home) jFather;
+						sr.view(backup[3]);					
+					}	
 
 				}
 
@@ -421,7 +444,7 @@ public class TableRow extends JPanel {
 		}
 		
 		if (father.father.equals("sincroautos")) {
-			return new String[] { backup[0], backup[1], backup[2] };
+			return new String[] { backup[0], backup[1], backup[2], backup[3], backup[4] };
 		}
 		
 		return null;
@@ -432,7 +455,7 @@ public class TableRow extends JPanel {
 			return Integer.parseInt(backup[6]);
 		}
 		if (father.father.equals("sincroautos")) {
-			return Integer.parseInt(backup[2]);
+			return Integer.parseInt(backup[4]);
 		}
 		return 0;
 	}
@@ -441,6 +464,9 @@ public class TableRow extends JPanel {
 		return check.isSelected();
 	}
 
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public TableRow(JPanel jFather, String[] data, int index, Table father, boolean flag, String uid) {
 		this.uid = uid;
 		this.father = father;
@@ -609,11 +635,6 @@ public class TableRow extends JPanel {
 							sr.calculate();
 						}
 						
-						if (father.father.equals("sincroautos")) {
-							Sincroautos sa = (Sincroautos) jFather;
-							sa.calculate();
-						}
-						
 						i=1;
 						
 						
@@ -640,6 +661,11 @@ public class TableRow extends JPanel {
 						if (father.father.equals("sincrorepuestos")) {
 							temp.setText("" + (a * b - Integer.parseInt(backup[5])));
 							backup[4] = temp.getText();
+						}
+						
+						if (father.father.equals("sincroautos")) {
+							Sincroautos sa = (Sincroautos) jFather;
+							sa.calculate();
 						}
 
 						father.updateRow(index, backup);

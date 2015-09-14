@@ -39,7 +39,11 @@ public class Info extends JFrame {
 		}
 		
 		if(type.equals("Bill_1")){
-			title = new String[] {"Trabajo", "Precio"};		
+			title = new String[] {"Descripción", "Empleado", "Tipo", "Precio"};		
+		}
+		
+		if(type.equals("home")){
+			title = new String[] {"Cliente", "Telefono", "Placa", "Fecha", "Precio"};		
 		}
 
 		boolean search = false;

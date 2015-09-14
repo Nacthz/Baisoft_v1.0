@@ -44,6 +44,13 @@ public class Table extends JPanel {
 		return true;
 	}
 
+	public void removeItems(){
+		originalData.clear();
+		actualData.clear();
+		panel_CENTER.removeAll();
+		rv();
+	}
+	
 	public int getValue(){
 		int sum = 0;
 		Component[] components = panel_CENTER.getComponents();

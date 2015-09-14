@@ -4,12 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import javax.swing.JLabel;
 
 public class Splash extends JFrame {
@@ -51,13 +50,17 @@ public class Splash extends JFrame {
 
 	public void Load(final JFrame main) {
 		final Main baisoft = new Main();
-		Timer delay = new Timer(3000, new ActionListener() {
+
+		Timer t = new Timer();
+		TimerTask tt = new TimerTask() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void run() {
+				t.cancel();
+				t.purge();
 				main.dispose();
 				baisoft.setVisible(true);
-			}
-		});
-		delay.start();
+			};
+		};
+		t.schedule(tt, 3000);
 	}
 }
